@@ -6,6 +6,7 @@ import "../App.css"; // Optional for extra styling
 
 const Home = () => {
   const [products, setProducts] = useState([]);
+  const [carousel, setCarousel] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
@@ -15,6 +16,10 @@ const Home = () => {
       .then((response) => setProducts(response.data))
       .catch((error) => console.error("Error fetching products:", error));
   }, []);
+  axiosInstance
+    .get("/carousel")
+    .then((response) => setCarousel(response.data))
+    .catch((error) => console.error("Error fetching carousel:", error));
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -39,17 +44,17 @@ const Home = () => {
             className="flex transition-transform duration-700 ease-in-out h-full"
             style={{
               transform: `translateX(-${currentIndex * 100}%)`,
-              width: `${products.slice(0, 10).length * 100}%`,
+              width: `${carousel.slice(0, 10).length * 100}%`,
             }}
           >
-            {products.slice(0, 10).map((product) => (
+            {carousel.slice(0, 10).map((carousel) => (
               <div
-                key={product._id}
+                key={carousel._id}
                 className="w-full flex-shrink-0 flex justify-center items-center h-full"
               >
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={carousel.image}
+                  alt={carousel.title}
                   className="h-full w-full object-cover rounded-md shadow-md"
                 />
               </div>
