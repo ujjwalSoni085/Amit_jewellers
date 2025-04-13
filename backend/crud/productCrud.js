@@ -3,8 +3,8 @@ const Product = require("../models/Product");
 // Add a new product
 const addProduct = async (req, res) => {
     try {
-        const { title, weight, price, image } = req.body;
-        const newProduct = new Product({ title, weight, price, image });
+        const { title, weight, price, image, description } = req.body;
+        const newProduct = new Product({ title, weight, price, image, description });
         await newProduct.save();
         res.status(201).json(newProduct);
     } catch (error) {

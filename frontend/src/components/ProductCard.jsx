@@ -1,6 +1,6 @@
 import React from "react";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onDelete, onViewProduct }) => {
   return (
     <div className="border-4 border-yellow-500 rounded-3xl shadow-xl p-4 transition-transform transform hover:scale-105 hover:shadow-2xl bg-white hover:bg-yellow-100 duration-300 w-64 hover:ring-4 hover:ring-yellow-300 hover:ring-opacity-50">
       <img src={product.image} alt={product.title} className="w-full h-40 object-cover rounded-2xl" />
@@ -8,12 +8,19 @@ const ProductCard = ({ product }) => {
       <p className="text-gray-600 text-base">Weight: {product.weight}g</p>
       <p className="text-gray-800 font-bold text-lg">Price: ₹{product.price}</p>
 
-      {/* View Button */}
-      <button className="mt-4 w-full bg-yellow-500 text-white py-2 rounded-full hover:bg-yellow-700 transition shadow-md hover:shadow-yellow-400 hover:shadow-lg">
+      <button onClick={() => onViewProduct(product._id)} className="mt-4 w-full bg-yellow-500 text-white py-2 rounded-full hover:bg-yellow-700 transition shadow-md hover:shadow-yellow-400 hover:shadow-lg">
         View Product
+      </button>
+
+      <button
+        onClick={() => onDelete(product._id)}
+        className="mt-4 w-full bg-yellow-500 text-white py-2 rounded-full hover:bg-red-600 transition shadow-md hover:shadow-yellow-400 hover:shadow-lg"
+      >
+        Delete
       </button>
     </div>
   );
 };
+
 
 export default ProductCard;

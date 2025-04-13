@@ -5,7 +5,15 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+// Middleware to serve static files from the React app
+app.use(express.static("frontend/build"));
+
+//enable cors for localhost:5173
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+}));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {

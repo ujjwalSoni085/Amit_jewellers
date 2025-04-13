@@ -1,13 +1,17 @@
-import React, { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import React, { use, useState } from "react";
+import axiosInstance from "../helper/axiosInstance";
+import { useNavigate } from "react-router-dom";
+
+
 
 const CreateProduct = () => {
+  const navigate = useNavigate();
   const [product, setProduct] = useState({
     title: "",
     weight: "",
     price: "",
     image: "",
+    description: "",
   });
 
   const [message, setMessage] = useState("");
@@ -21,25 +25,20 @@ const CreateProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/api/products/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(product),
-      });
-
-      if (response.ok) {
+      console.log("Product data:", product);
+      const response = await axiosInstance.post("/products/add", product);
+      if (response.status === 201) {
         setMessage("Product added successfully!");
-        setProduct({ title: "", weight: "", price: "", image: "" }); // Reset form
+        setProduct({ title: "", weight: "", price: "", image: "" });
+        navigate("/");
       } else {
         setMessage("Failed to add product. Try again.");
       }
     } catch (error) {
-      console.error("Error:", error);
-      setMessage("Something went wrong.");
+      console.error("Error adding product:", error);
+      setMessage("Something went wrong. Please try again.");
     }
-  };
+  }
 
   return (
     <div>
@@ -94,6 +93,18 @@ const CreateProduct = () => {
                 type="text"
                 name="image"
                 value={product.image}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium">Description</label>
+              <input
+                type="text"
+                name="description"
+                value={product.description}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
                 required
