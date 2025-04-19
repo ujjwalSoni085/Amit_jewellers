@@ -13,13 +13,29 @@ const Home = () => {
   useEffect(() => {
     axiosInstance
       .get("/products")
-      .then((response) => setProducts(response.data))
+      .then((response) => setProducts(response.data))//p1, p2, p3, p4, p5, p6, p7, p8, p9, p10
+      //p->product - details, name , title, price, weight, image
       .catch((error) => console.error("Error fetching products:", error));
   }, []);
   axiosInstance
     .get("/carousel")
     .then((response) => setCarousel(response.data))
     .catch((error) => console.error("Error fetching carousel:", error));
+
+  const handleDelete = (id) => {
+    axiosInstance
+      .delete(`/products/delete/${id}`)
+      .then(() => {
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== id)
+        );
+      })
+      .catch((error) => console.error("Error deleting product:", error));
+  }
+
+  const handleViewProduct = (id) => {
+    navigate(`/product/${id}`);
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,7 +71,7 @@ const Home = () => {
                 <img
                   src={carousel.image}
                   alt={carousel.title}
-                  className="h-full w-full object-cover rounded-md shadow-md"
+                  className="h-full w-full object-fill rounded-md shadow-md"
                 />
               </div>
             ))}
@@ -66,9 +82,19 @@ const Home = () => {
         <p className="mt-8 text-lg text-gray-700 font-semibold">All Products</p>
         <div className="flex flex-wrap justify-center gap-6 p-6">
           {products.map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <ProductCard key={product._id} product={product} onViewProduct={handleViewProduct}/>
           ))}
         </div>
+        <video
+          className="w-full rounded-xl shadow-lg"
+          controls
+          autoPlay
+          muted
+          loop
+        >
+          <source src="/video/amit-jewellers.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </main>
     </div>
   );
