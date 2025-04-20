@@ -14,9 +14,14 @@ const createAdmin = async (req, res) => {
     }
 
     // Create a new admin
-     const hashedPassword = await bcrypt.hash(password, 10);
-    const newAdmin = new Admin({ name, email, password:hashedPassword, phoneNumber });
-    
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newAdmin = new Admin({
+      name,
+      email,
+      password: hashedPassword,
+      phoneNumber,
+    });
+
     await newAdmin.save();
     res
       .status(201)
@@ -25,33 +30,26 @@ const createAdmin = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-const getAdmin = async (req, res) => {  
+
+// Get admin details
+const getAdmin = async (req, res) => {
   try {
-    //get the token from the request cookies or authorization header
-    const token =
-          req.cookies.authToken || req.headers.authorization?.split(" ")[1];
-    
-        if (!token) {
-          return res
-            .status(401)
-            .json({ error: "Access denied. No token provided." });
-        }
-    
-        // Verify the token
-        const decoded = jwt.verify(token, "your_secret_key");
-    
-        // Find the user by the ID in the token
-        const user = await User.findById(decoded.id).select("-password"); // Exclude the password field
-        if (!user) {
-          return res.status(404).json({ error: "User not found" });
-        }
-    
-        // Return the user details
-        res.status(200).json({ user });
-      } catch (error) {
-        res.status(400).json({ error: "Invalid token" });
-      }
-    };
+    // Use the decoded token from the verifyToken middleware
+    console.log("Decoded token:", req.user); // Debugging line to check the decoded token
+    const adminId = req.user.id; // Extract the admin ID from req.user
+
+    // Find the admin by the ID in the token
+    const admin = await Admin.findById(adminId).select("-password"); // Exclude the password field
+    if (!admin) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    // Return the admin details
+    res.status(200).json({ admin });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // Login an admin
 const loginAdmin = async (req, res) => {
@@ -73,15 +71,21 @@ const loginAdmin = async (req, res) => {
     // Generate a JWT token
     const token = jwt.sign(
       { id: admin._id, email: admin.email },
-      "your_secret_key", // Replace with a secure secret key
+      "adminsecret_key", // Replace with a secure secret key
       { expiresIn: "1d" } // Token expires in 1 day
     );
 
-    // Send the token and admin details (excluding password)
+    // Set the token as a cookie
+    res.cookie("authToken", token, {
+      httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      sameSite: "lax", // Adjust SameSite policy as needed
+      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+    });
+
+    // Send the admin details (excluding password)
     const { password: _, ...adminDetails } = admin.toObject();
-    res
-      .status(200)
-      .json({ message: "Login successful", token, admin: adminDetails });
+    res.status(200).json({ message: "Login successful", admin: adminDetails });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

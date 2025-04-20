@@ -7,12 +7,14 @@ const {
   deleteProduct,
 } = require("../crud/productCrud");
 
+const verifyToken = require("../middlewares/verifyToken");
+
 const router = express.Router();
 
 router.post("/add", addProduct);
 router.get("/", getProducts);
 router.get("/:id", getProductById);
 router.put("/update/:id", updateProduct);
-router.delete("/delete/:id", deleteProduct);
+router.delete("/delete/:id",verifyToken, deleteProduct);
 
 module.exports = router;
