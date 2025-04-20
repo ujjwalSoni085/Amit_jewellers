@@ -13,7 +13,7 @@ const Home = () => {
   useEffect(() => {
     axiosInstance
       .get("/products")
-      .then((response) => setProducts(response.data))//p1, p2, p3, p4, p5, p6, p7, p8, p9, p10
+      .then((response) => setProducts(response.data)) //p1, p2, p3, p4, p5, p6, p7, p8, p9, p10
       //p->product - details, name , title, price, weight, image
       .catch((error) => console.error("Error fetching products:", error));
   }, []);
@@ -22,20 +22,9 @@ const Home = () => {
     .then((response) => setCarousel(response.data))
     .catch((error) => console.error("Error fetching carousel:", error));
 
-  const handleDelete = (id) => {
-    axiosInstance
-      .delete(`/products/delete/${id}`)
-      .then(() => {
-        setProducts((prevProducts) =>
-          prevProducts.filter((product) => product._id !== id)
-        );
-      })
-      .catch((error) => console.error("Error deleting product:", error));
-  }
-
   const handleViewProduct = (id) => {
     navigate(`/product/${id}`);
-  }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -82,7 +71,11 @@ const Home = () => {
         <p className="mt-8 text-lg text-gray-700 font-semibold">All Products</p>
         <div className="flex flex-wrap justify-center gap-6 p-6">
           {products.map((product) => (
-            <ProductCard key={product._id} product={product} onViewProduct={handleViewProduct}/>
+            <ProductCard
+              key={product._id}
+              product={product}
+              onViewProduct={handleViewProduct}
+            />
           ))}
         </div>
         <video

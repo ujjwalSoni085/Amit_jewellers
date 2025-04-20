@@ -11,7 +11,7 @@ const Header = () => {
         const response = await fetch("https://www.goldapi.io/api/XAU/INR", {
           method: "GET",
           headers: {
-            "x-access-token": "goldapi-3l15hsm9ekjy1g-io",
+            "x-access-token": "goldapi-gjehnsm9o3iy8g-io",
             "Content-Type": "application/json",
           },
         });

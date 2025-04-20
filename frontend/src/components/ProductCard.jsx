@@ -29,6 +29,19 @@ const ProductCard = ({ product, onDelete, onViewProduct }) => {
           onClick={() => onDelete(product._id)}
           className="mt-4 w-full bg-yellow-500 text-white py-2 rounded-full hover:bg-red-600 transition shadow-md hover:shadow-yellow-400 hover:shadow-lg"
         >
+          {/* {products.map((product) => (
+  <div key={product._id} className="product-card">
+    <h2>{product.title}</h2>
+    <p>Weight: {product.weight}</p>
+    <p>Price: ₹{product.price}</p>
+    <img src={product.image} alt={product.title} />
+
+    <button onClick={() => deleteProduct(product._id)}>
+      Delete
+    </button>
+  </div>
+))} */}
+
           Delete
         </button>
       )}

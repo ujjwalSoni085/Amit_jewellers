@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../helper/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import Cookies from "js-cookie"; // Import js-cookie to manage cookies
 
 
 const Admin = () => {
@@ -13,16 +14,20 @@ const Admin = () => {
     image: "",
   });
 
-  const productDelete = (id) => {
-    axiosInstance
-      .delete(`/products/delete/${id}`)
-      .then(() => {
-        setProducts((prevProducts) =>
-          prevProducts.filter((product) => product._id !== id)
-        );
-      })
-      .catch((error) => console.error("Error deleting product:", error));
-  }
+ const productDelete = (id) => {
+     axiosInstance
+       .delete(`/products/delete/${id}`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("authToken")}`, // Include the token in the request headers
+          },
+       })
+       .then(() => {
+         setProducts((prevProducts) =>
+           prevProducts.filter((product) => product._id !== id)
+         );
+       })
+       .catch((error) => console.error("Error deleting product:", error));
+   };
 
   const fetchCarousel = async () => {
     const res = await axiosInstance.get("/carousel");

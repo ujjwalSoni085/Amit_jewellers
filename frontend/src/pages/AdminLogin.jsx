@@ -19,6 +19,10 @@ function AdminLogin() {
       const response = await axiosInstance.post("/admin/login", formData);
       console.log("Admin login successful:", response.data);
       // Handle successful login (e.g., save token, redirect, etc.)
+      if (response.status === 200) {
+    
+        window.location.href = "/admin"; // Redirect to admin page
+      }
     } catch (error) {
       console.error("Admin login failed:", error.response?.data || error.message);
       // Handle login error
