@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../helper/axiosInstance";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import "../App.css"; // Optional for extra styling
 
@@ -8,7 +8,10 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [carousel, setCarousel] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [filteredProducts, setFilteredProducts] = useState([]); // Filtered products
+  const location = useLocation();
   const navigate = useNavigate();
+  const query = new URLSearchParams(location.search).get("search");
 
   useEffect(() => {
     axiosInstance
@@ -35,6 +38,19 @@ const Home = () => {
 
     return () => clearInterval(interval);
   }, [products]);
+
+  useEffect(() => {
+    // Filter products based on the search query
+    console.log("Query:", query); // Log the query to check its value
+    if (query) {
+      const filtered = products.filter((product) =>
+        product.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setProducts(filtered);
+    } else {
+      setFilteredProducts(products); // Show all products if no query
+    }
+  }, [query]);
 
   return (
     <div>

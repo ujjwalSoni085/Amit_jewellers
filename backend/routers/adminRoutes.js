@@ -5,7 +5,7 @@ const verifyToken = require("../middlewares/verifyToken"); // Import the verifyT
 const router = express.Router();
 
 // Admin routes
-router.post("/signup", verifyToken, createAdmin); // Create a new admin (protected route)
+router.post("/signup", createAdmin); // Create a new admin (protected route)
 router.post("/login", loginAdmin); // Login an admin (no token required)
 router.get("/get", verifyToken, getAdmin); // Get admin details (protected route)
 router.get("/access", verifyToken, (req, res) => {

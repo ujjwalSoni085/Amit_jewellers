@@ -5,13 +5,14 @@ const jwt = require("jsonwebtoken");
 // Add a new user
 const addUser = async (req, res) => {
   try {
-    const { name, email, password, phoneNumber } = req.body;
+    const { name, email, password, phoneNumber, profile } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
       phoneNumber,
+      profile,
     });
     await newUser.save();
     res.status(201).json(newUser);
@@ -65,30 +66,20 @@ const loginUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
+
   try {
-    // Get the token from the request cookies or Authorization header
-    const token =
-      req.cookies.authToken || req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-      return res
-        .status(401)
-        .json({ error: "Access denied. No token provided." });
-    }
-
-    // Verify the token
-    const decoded = jwt.verify(token, "your_secret_key");
-
+    console.log("Get user request",req.user); // Log the request
+    const userId = req.user.id; // Extract the user ID from req.user
+console.log("User ID from token:", userId); // Log the user ID
     // Find the user by the ID in the token
-    const user = await User.findById(decoded.id).select("-password"); // Exclude the password field
+    const user = await User.findById(userId).select("-password"); 
+    // Exclude the password field
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
-    // Return the user details
     res.status(200).json({ user });
   } catch (error) {
-    res.status(400).json({ error: "Invalid token" });
+    res.status(500).json({ error: error.message });
   }
 };
 

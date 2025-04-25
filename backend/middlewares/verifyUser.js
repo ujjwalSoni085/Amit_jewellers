@@ -3,6 +3,7 @@
 const jwt = require("jsonwebtoken");
 
 
+
 module.exports = function (req, res, next) {
   console.log(req.headers); // Debugging line to check headers
   console.log("Middleware called"); // Debugging line to check if middleware is being called
@@ -24,7 +25,7 @@ module.exports = function (req, res, next) {
 
   try {
     console.log("Verifying token..."); // Debugging line to check if token verification is happening
-    const decoded = jwt.verify(token, "adminsecret_key"); // Use your secret key
+    const decoded = jwt.verify(token, "usersecret_key"); // Use your secret key
     console.log("Decoded Token:", decoded); // Debugging line to check the decoded token
     req.user = decoded;
     next();

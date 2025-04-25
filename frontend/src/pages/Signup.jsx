@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Profiler, useState } from "react";
 import axiosInstance from "../helper/axiosInstance"; // Adjust the path as needed
 
 function Signup() {
@@ -7,6 +7,7 @@ function Signup() {
     email: "",
     password: "",
     phoneNumber: "",
+    profile: "",
   });
 
   const handleChange = (e) => {
@@ -69,6 +70,24 @@ function Signup() {
               required
             />
           </div>
+          <div>
+            <label
+              htmlFor="profile"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Profile
+            </label>
+            <input
+              type="text"
+              name="profile"
+              id="profile"
+              placeholder="Enter your profile"
+              value={formData.profile}
+              onChange={handleChange}
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
+              required
+            />
+          </div>  
           <div>
             <label
               htmlFor="password"
