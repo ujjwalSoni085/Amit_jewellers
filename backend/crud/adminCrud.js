@@ -75,17 +75,9 @@ const loginAdmin = async (req, res) => {
       { expiresIn: "1d" } // Token expires in 1 day
     );
 
-    // Set the token as a cookie
-    res.cookie("authToken", token, {
-      httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "lax", // Adjust SameSite policy as needed
-      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
-    });
-
     // Send the admin details (excluding password)
     const { password: _, ...adminDetails } = admin.toObject();
-    res.status(200).json({ message: "Login successful", admin: adminDetails });
+    res.status(200).json({ message: "Login successful", authToken: token , role: "admin" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

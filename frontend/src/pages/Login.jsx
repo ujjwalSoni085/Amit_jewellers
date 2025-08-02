@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axiosInstance from "../helper/axiosInstance"; // Adjust the path as needed
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,7 +20,16 @@ function Login() {
       console.log("Form Data Before POST:", formData); // Log form data
       const response = await axiosInstance.post("/user/login", formData);
       console.log("Login successful:", response.data);
-      // Handle successful login (e.g., save token, redirect, etc.)
+
+      // Save authToken from backend response to localStorage
+      if (response.data && response.data.authToken) {
+        localStorage.setItem("authToken", response.data.authToken);
+      }
+      // Save role as 'user' in localStorage
+      localStorage.setItem("role", "user");
+
+      // Redirect to home page after successful login
+      navigate("/");
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       // Handle login error

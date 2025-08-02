@@ -43,7 +43,6 @@ const Admin = () => {
     setProducts(res.data);
   }
 
-
   useEffect(() => {
     fetchCarousel();
     fetchProducts();

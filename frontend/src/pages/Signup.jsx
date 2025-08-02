@@ -1,5 +1,6 @@
 import React, { Profiler, useState } from "react";
 import axiosInstance from "../helper/axiosInstance"; // Adjust the path as needed
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ function Signup() {
     phoneNumber: "",
     profile: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,6 +23,8 @@ function Signup() {
       const response = await axiosInstance.post("/user/signup", formData);
       console.log("signup successful:", response.data);
       // Handle successful signup (e.g., save token, redirect, etc.)
+      // Redirect to home page after successful signup
+      navigate("/");
     } catch (error) {
       console.error("signup failed:", error.response?.data || error.message);
       // Handle signup error
@@ -87,7 +91,7 @@ function Signup() {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
               required
             />
-          </div>  
+          </div>
           <div>
             <label
               htmlFor="password"

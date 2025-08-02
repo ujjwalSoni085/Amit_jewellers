@@ -1,27 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../helper/axiosInstance";
+// import Cookies from "js-cookie";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [goldPrice, setGoldPrice] = useState(null);
-  const [user, setUser] = useState(null); // State to store user profile
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch user profile
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axiosInstance.get("/user/");
-        console.log("User profile data:", response.data.user); // Log the user data
-        setUser(response.data.user); // Set user data
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
+  // Check for authToken and role in localStorage
+  const hasAuthToken = !!localStorage.getItem("authToken");
+  const role = localStorage.getItem("role");
 
-    fetchUserProfile();
-  }, []);
+  // Fetch user profile if authToken exists, log if not
+  useEffect(() => {
+    if (hasAuthToken) {
+      const fetchUserProfile = async () => {
+        try {
+          const authToken = localStorage.getItem("authToken");
+          const response = await axiosInstance.get("/user", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+          setUser(response.data.user); // response.data.user is the user object
+          console.log("User profile:", response.data.user); // Log user profile
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      };
+      fetchUserProfile();
+    } else {
+      console.log("authToken cookie not present");
+    }
+  }, [hasAuthToken]);
 
   // Fetch gold price
   useEffect(() => {
@@ -40,14 +53,13 @@ const Header = () => {
         console.error("Error fetching gold price:", error);
       }
     };
-
     fetchGoldPrice();
   }, []);
 
   const handleSearch = (event) => {
     event.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/?search=${searchQuery}`); // Navigate to the search results page
+      navigate(`/?search=${searchQuery}`);
     }
   };
 
@@ -58,18 +70,21 @@ const Header = () => {
         <div className="flex items-center gap-4 text-base font-semibold">
           <Link to="/" className="flex items-center text-white no-underline">
             <img
-              src="/logo.png" // <-- Place your image in /public/logo.png
+              src="/logo.png"
               alt="Amit Jewellers Logo"
               className="w-7 h-7 mr-2"
             />
             Amit Jewellers
           </Link>
-          <Link
-            to="/create-product"
-            className="bg-white text-yellow-700 font-medium px-3 py-1 rounded-full hover:bg-yellow-100 transition shadow-sm text-sm"
-          >
-            ➕ Add Product
-          </Link>
+          {/* Show Add Product only for admin (role from localStorage) */}
+          {role === "admin" && (
+            <Link
+              to="/create-product"
+              className="bg-white text-yellow-700 font-medium px-3 py-1 rounded-full hover:bg-yellow-100 transition shadow-sm text-sm"
+            >
+              ➕ Add Product
+            </Link>
+          )}
         </div>
 
         {/* Center - Search */}
@@ -99,10 +114,10 @@ const Header = () => {
               ? `💰 Gold 24K: ₹${goldPrice}/g`
               : "Fetching gold price..."}
           </div>
-          {user ? (
+          {hasAuthToken && user && user.profile && user.name ? (
             <div className="flex items-center gap-2">
               <img
-                src={user.profile} // User's profile picture
+                src={user.profile}
                 alt="Profile"
                 className="w-8 h-8 rounded-full border-2 border-white"
               />

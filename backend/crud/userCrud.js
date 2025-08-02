@@ -49,17 +49,9 @@ const loginUser = async (req, res) => {
       }
     );
 
-    // Set the token as a cookie
-    res.cookie("authToken", token, {
-      httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "strict", // Prevents CSRF attacks
-      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
-    });
-
     // If login is successful, return user details (excluding password)
     const { password: _, ...userDetails } = user.toObject();
-    res.status(200).json({ message: "Login successful", user: userDetails });
+    res.status(200).json({ message: "Login successful", authToken : token , role: "user" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

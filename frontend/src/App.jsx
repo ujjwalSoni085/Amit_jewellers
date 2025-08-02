@@ -9,7 +9,7 @@ import Admin from "./pages/admin";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import axiosInstance from "./helper/axiosInstance"; // Import Axios instance
-import "./App.css"; // ✅ import CSS for scroll animation
+import "./App.css"; // import CSS for scroll animation
 import AdminLogin from "./pages/AdminLogin";
 import Adminsignup from "./pages/Adminsignup";
 
@@ -18,8 +18,13 @@ export default function App() {
 
   useEffect(() => {
     // Check if admin has access
+    const authToken = localStorage.getItem("authToken");
     axiosInstance
-      .get("/admin/access")
+      .get("/admin/access", {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
       .then((response) => {
         if (response.status === 200) {
           setIsAdmin(true); // Access granted

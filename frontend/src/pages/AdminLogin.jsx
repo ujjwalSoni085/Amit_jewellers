@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axiosInstance from "../helper/axiosInstance"; // Adjust the path as needed
+import { useNavigate } from "react-router-dom";
 
 function AdminLogin() {
   const [formData, setFormData] = useState({
@@ -20,14 +21,22 @@ function AdminLogin() {
       console.log("Admin login successful:", response.data);
       // Handle successful login (e.g., save token, redirect, etc.)
       if (response.status === 200) {
-    
+        // Save authToken from backend response to localStorage
+        if (response.data && response.data.authToken) {
+          localStorage.setItem("authToken", response.data.authToken);
+        }
+        localStorage.setItem("role", "admin"); // Set role in localStorage
         window.location.href = "/admin"; // Redirect to admin page
       }
     } catch (error) {
-      console.error("Admin login failed:", error.response?.data || error.message);
+      console.error(
+        "Admin login failed:",
+        error.response?.data || error.message
+      );
       // Handle login error
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

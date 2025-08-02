@@ -2,18 +2,17 @@
 
 const jwt = require("jsonwebtoken");
 
-
 module.exports = function (req, res, next) {
   console.log(req.headers); // Debugging line to check headers
   console.log("Middleware called"); // Debugging line to check if middleware is being called
-  if (req.headers.cookie) {
-    console.log("Cookie Header:", req.headers.cookie); // Debugging line
-    const cookies = req.headers.cookie.split("; ");
-    console.log("Cookies Array:", cookies); // Debugging line to check cookies array
-    const authTokenCookie = cookies.find((cookie) =>
-      cookie.trim().startsWith("authToken=")
-    );
-    token = authTokenCookie ? authTokenCookie.split("=")[1] : null;
+
+  // Extract token from Authorization header (Bearer <token>)
+  let token = null;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
   }
 
   console.log("Extracted Token:", token); // Debugging line to check the extracted token
@@ -31,6 +30,4 @@ module.exports = function (req, res, next) {
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
-
-  
 };

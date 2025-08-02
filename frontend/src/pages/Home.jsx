@@ -32,7 +32,7 @@ const Home = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
-        prevIndex === products.slice(0, 10).length - 1 ? 0 : prevIndex + 1
+        prevIndex === products.slice(0, 3).length - 1 ? 0 : prevIndex + 1
       );
     }, 3000); // change every 3 seconds
 
@@ -56,19 +56,20 @@ const Home = () => {
     <div>
       <main className="p-6 text-center">
         {/* 🟡 Carousel Banner */}
-        <p className="text-lg text-gray-700 font-semibold mb-4">
-          Latest Designs
-        </p>
+        <p className="text-2xl text-gray-800 font-bold font-serif mb-6">
+  Latest Designs
+</p>
+
 
         <div className="relative w-full h-[90vh] overflow-hidden">
           <div
             className="flex transition-transform duration-700 ease-in-out h-full"
             style={{
               transform: `translateX(-${currentIndex * 100}%)`,
-              width: `${carousel.slice(0, 10).length * 100}%`,
+              width: `${carousel.slice(0, 10).length * 35}%`,
             }}
           >
-            {carousel.slice(0, 10).map((carousel) => (
+            {carousel.slice(0,10).map((carousel) => (
               <div
                 key={carousel._id}
                 className="w-full flex-shrink-0 flex justify-center items-center h-full"
