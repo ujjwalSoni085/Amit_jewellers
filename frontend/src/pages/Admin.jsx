@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../helper/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import Cookies from "js-cookie"; // Import js-cookie to manage cookies
 
 
 const Admin = () => {
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
+  const [prices, setPrices] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -15,12 +15,9 @@ const Admin = () => {
   });
 
  const productDelete = (id) => {
+     if (!confirm("Delete this product? This action cannot be undone.")) return;
      axiosInstance
-       .delete(`/products/delete/${id}`, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("authToken")}`, // Include the token in the request headers
-          },
-       })
+       .delete(`/products/delete/${id}`)
        .then(() => {
          setProducts((prevProducts) =>
            prevProducts.filter((product) => product._id !== id)
@@ -32,6 +29,11 @@ const Admin = () => {
   const fetchCarousel = async () => {
     const res = await axiosInstance.get("/carousel");
     setItems(res.data);
+  };
+
+  const fetchPrices = async () => {
+    const res = await axiosInstance.get("/prices");
+    setPrices(res.data || []);
   };
 
   const handleViewProduct = (id) => {
@@ -46,6 +48,7 @@ const Admin = () => {
   useEffect(() => {
     fetchCarousel();
     fetchProducts();
+    fetchPrices();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -56,66 +59,109 @@ const Admin = () => {
   };
 
   const handleDelete = async (id) => {
+    if (!confirm("Remove this carousel item?")) return;
     await axiosInstance.delete(`/carousel/delete/${id}`);
     fetchCarousel();
   };
 
-  return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <h2 className="text-xl font-bold mb-4">Carousel Manager</h2>
-      <form onSubmit={handleSubmit} className="mb-6 space-y-2">
-        <input
-          className="w-full p-2 border rounded"
-          type="text"
-          placeholder="Title"
-          value={formData.title}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-        />
-        <input
-          className="w-full p-2 border rounded"
-          type="text"
-          placeholder="Image URL"
-          value={formData.image}
-          onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-        />
-        <textarea
-          className="w-full p-2 border rounded"
-          placeholder="Description"
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-        />
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-          type="submit"
-        >
-          Add
-        </button>
-      </form>
+  const gold = prices.find(p => p.metal === 'gold');
+  const silver = prices.find(p => p.metal === 'silver');
 
-      <div className="space-y-4">
-        {items.map((item) => (
-          <div key={item._id} className="border p-4 rounded shadow">
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full h-48 object-cover rounded"
-            />
-            <h3 className="text-lg font-bold mt-2">{item.title}</h3>
-            <p>{item.description}</p>
-            <button
-              onClick={() => handleDelete(item._id)}
-              className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
-            >
-              Delete
-            </button>
+  const refreshPrices = async () => {
+    try {
+      await axiosInstance.post('/prices/refresh');
+      fetchPrices();
+    } catch (e) {}
+  };
+
+  return (
+    <div className="p-4 max-w-7xl mx-auto space-y-8">
+      {/* Top KPI bar */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="rounded-xl border border-yellow-200 bg-white p-4">
+          <div className="text-sm text-gray-500">Gold price/g</div>
+          <div className="text-2xl font-semibold text-yellow-700">{gold ? gold.pricePerGram : '—'}</div>
+        </div>
+        <div className="rounded-xl border border-yellow-200 bg-white p-4">
+          <div className="text-sm text-gray-500">Silver price/g</div>
+          <div className="text-2xl font-semibold text-yellow-700">{silver ? silver.pricePerGram : '—'}</div>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between">
+          <div>
+            <div className="text-sm text-gray-500">Products</div>
+            <div className="text-2xl font-semibold text-gray-900">{products.length}</div>
           </div>
-        ))}
+          <button onClick={refreshPrices} className="text-sm px-3 py-1.5 rounded-md border border-yellow-300 text-yellow-700 hover:bg-yellow-50">Refresh prices</button>
+        </div>
       </div>
-      <div>
-        <h2 className="text-xl font-bold mb-4">Product Manager</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      {/* Carousel Manager */}
+      <section className="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b">
+          <h2 className="text-lg font-semibold">Carousel Manager</h2>
+        </div>
+        <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <form onSubmit={handleSubmit} className="space-y-2 order-last lg:order-first">
+            <input
+              className="w-full p-2 border rounded"
+              type="text"
+              placeholder="Title"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            />
+            <input
+              className="w-full p-2 border rounded"
+              type="text"
+              placeholder="Image URL"
+              value={formData.image}
+              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+            />
+            <textarea
+              className="w-full p-2 border rounded"
+              placeholder="Description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+            />
+            <button
+              className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+              type="submit"
+            >
+              Add
+            </button>
+          </form>
+
+          <div className="lg:col-span-2 space-y-4">
+            {items.map((item) => (
+              <div key={item._id} className="border p-3 rounded-lg shadow-sm bg-white flex gap-3">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-40 h-24 object-cover rounded"
+                />
+                <div className="flex-1 text-left">
+                  <h3 className="text-base font-semibold">{item.title}</h3>
+                  <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>
+                  <button
+                    onClick={() => handleDelete(item._id)}
+                    className="mt-2 border border-red-200 text-red-600 px-3 py-1 rounded hover:bg-red-50"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Product Manager */}
+      <section className="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b">
+          <h2 className="text-lg font-semibold">Product Manager</h2>
+        </div>
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.map((product) => (
             <ProductCard
               key={product._id}
@@ -125,9 +171,11 @@ const Admin = () => {
             />
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 };
 
 export default Admin;
+
+

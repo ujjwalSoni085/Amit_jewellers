@@ -7,6 +7,7 @@ function AdminLogin() {
     email: "",
     password: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -15,8 +16,9 @@ function AdminLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
-      console.log("Form Data Before POST:", formData); // Log form data
+      console.log("Form Data Before POST:", formData); // Log data
       const response = await axiosInstance.post("/admin/login", formData);
       console.log("Admin login successful:", response.data);
       // Handle successful login (e.g., save token, redirect, etc.)
@@ -25,8 +27,9 @@ function AdminLogin() {
         if (response.data && response.data.authToken) {
           localStorage.setItem("authToken", response.data.authToken);
         }
-        localStorage.setItem("role", "admin"); // Set role in localStorage
-        window.location.href = "/admin"; // Redirect to admin page
+        localStorage.setItem("role", "admin");
+        window.dispatchEvent(new Event("auth-changed"));
+        window.location.href = "/admin";
       }
     } catch (error) {
       console.error(
@@ -34,9 +37,10 @@ function AdminLogin() {
         error.response?.data || error.message
       );
       // Handle login error
+    } finally {
+      setIsSubmitting(false);
     }
   };
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -83,9 +87,14 @@ function AdminLogin() {
           </div>
           <button
             type="submit"
-            className="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300"
+            disabled={isSubmitting}
+            className={`w-full bg-yellow-500 text-white py-2 px-4 rounded-lg transition duration-300 ${
+              isSubmitting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-yellow-600"
+            }`}
           >
-            Login
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

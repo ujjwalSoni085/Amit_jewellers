@@ -1,6 +1,7 @@
 const Admin = require("../models/admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { signAccessToken } = require("../utils/jwt");
 
 // Create a new admin
 const createAdmin = async (req, res) => {
@@ -34,8 +35,6 @@ const createAdmin = async (req, res) => {
 // Get admin details
 const getAdmin = async (req, res) => {
   try {
-    // Use the decoded token from the verifyToken middleware
-    console.log("Decoded token:", req.user); // Debugging line to check the decoded token
     const adminId = req.user.id; // Extract the admin ID from req.user
 
     // Find the admin by the ID in the token
@@ -69,15 +68,16 @@ const loginAdmin = async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = jwt.sign(
-      { id: admin._id, email: admin.email },
-      "adminsecret_key", // Replace with a secure secret key
-      { expiresIn: "1d" } // Token expires in 1 day
-    );
+    const payload = { id: admin._id, email: admin.email };
+    const accessToken = signAccessToken(payload, "admin");
 
-    // Send the admin details (excluding password)
-    const { password: _, ...adminDetails } = admin.toObject();
-    res.status(200).json({ message: "Login successful", authToken: token , role: "admin" });
+    res
+      .status(200)
+      .json({
+        message: "Login successful",
+        authToken: accessToken,
+        role: "admin",
+      });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

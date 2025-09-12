@@ -5,35 +5,25 @@ import CreateProduct from "./pages/CreateProduct";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Product from "./pages/Product";
-import Admin from "./pages/admin";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import axiosInstance from "./helper/axiosInstance"; // Import Axios instance
+import Admin from "./pages/Admin";
 import "./App.css"; // import CSS for scroll animation
 import AdminLogin from "./pages/AdminLogin";
 import Adminsignup from "./pages/Adminsignup";
+import RequireAdmin from "./components/RequireAdmin";
 
 export default function App() {
-  const [isAdmin, setIsAdmin] = useState(false); // State to track admin access
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Check if admin has access
-    const authToken = localStorage.getItem("authToken");
     axiosInstance
-      .get("/admin/access", {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      })
+      .get("/admin/access")
       .then((response) => {
-        if (response.status === 200) {
-          setIsAdmin(true); // Access granted
-        }
+        if (response.status === 200) setIsAdmin(true);
       })
-      .catch((error) => {
-        console.error("Access denied:", error);
-        setIsAdmin(false); // Access denied
-      });
+      .catch(() => setIsAdmin(false));
   }, []);
 
   return (
@@ -43,18 +33,13 @@ export default function App() {
         <main className="flex-grow overflow-hidden">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/create-product" element={<CreateProduct />} />
+            <Route path="/create-product" element={<RequireAdmin><CreateProduct /></RequireAdmin>} />
             <Route path="/product/:id" element={<Product />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/signup" element={<Adminsignup />} />
-            {/* Conditionally render admin routes */}
-            {isAdmin && (
-              <>
-                <Route path="/admin" element={<Admin />} />
-              </>
-            )}
+            <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
           </Routes>
         </main>
         <Footer />

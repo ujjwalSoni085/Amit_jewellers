@@ -3,9 +3,12 @@ const carousel = require("../models/carousel");
 const addCarousel = async (req, res) => { 
     try {
         const { title, image } = req.body;
+        //created documets of carousel
         const newCarousel = new carousel({ title, image });
+        //save the new carusel
         await newCarousel.save();
         res.status(201).json(newCarousel);
+        
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -32,9 +35,6 @@ const deleteCarousel = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
-
-
-
 module.exports = {
     addCarousel,
     getAllCarousel,

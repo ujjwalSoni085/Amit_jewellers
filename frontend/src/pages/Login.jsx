@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import axiosInstance from "../helper/axiosInstance"; // Adjust the path as needed
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -16,23 +17,22 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       console.log("Form Data Before POST:", formData); // Log form data
       const response = await axiosInstance.post("/user/login", formData);
-      console.log("Login successful:", response.data);
 
-      // Save authToken from backend response to localStorage
       if (response.data && response.data.authToken) {
         localStorage.setItem("authToken", response.data.authToken);
       }
-      // Save role as 'user' in localStorage
       localStorage.setItem("role", "user");
-
-      // Redirect to home page after successful login
+      window.dispatchEvent(new Event("auth-changed"));
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       // Handle login error
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -81,11 +81,25 @@ function Login() {
           </div>
           <button
             type="submit"
-            className="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300"
+            disabled={isSubmitting}
+            className={`w-full bg-yellow-500 text-white py-2 px-4 rounded-lg transition duration-300 ${
+              isSubmitting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-yellow-600"
+            }`}
           >
-            Login
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-yellow-600 hover:text-yellow-700 font-medium"
+          >
+            Create new account
+          </Link>
+        </p>
       </div>
     </div>
   );

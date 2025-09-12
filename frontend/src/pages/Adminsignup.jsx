@@ -8,6 +8,7 @@ function SignupAdmin() {
     password: "",
     phoneNumber: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,6 +17,7 @@ function SignupAdmin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const response = await axiosInstance.post("/admin/signup", formData);
       console.log("Admin signup successful:", response.data);
@@ -26,6 +28,8 @@ function SignupAdmin() {
         error.response?.data || error.message
       );
       // Handle signup error
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -110,9 +114,14 @@ function SignupAdmin() {
           </div>
           <button
             type="submit"
-            className="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300"
+            disabled={isSubmitting}
+            className={`w-full bg-yellow-500 text-white py-2 px-4 rounded-lg transition duration-300 ${
+              isSubmitting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-yellow-600"
+            }`}
           >
-            Signup
+            {isSubmitting ? "Signing up..." : "Sign up"}
           </button>
         </form>
       </div>

@@ -20,46 +20,48 @@ const Home = () => {
       //p->product - details, name , title, price, weight, image
       .catch((error) => console.error("Error fetching products:", error));
   }, []);
-  axiosInstance
-    .get("/carousel")
-    .then((response) => setCarousel(response.data))
-    .catch((error) => console.error("Error fetching carousel:", error));
+  useEffect(() => {
+    axiosInstance
+      .get("/carousel")
+      .then((response) => setCarousel(response.data))
+      .catch((error) => console.error("Error fetching carousel:", error));
+  }, []);
 
   const handleViewProduct = (id) => {
     navigate(`/product/${id}`);
   };
 
   useEffect(() => {
+    if (!carousel || carousel.length === 0) return;
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
-        prevIndex === products.slice(0, 3).length - 1 ? 0 : prevIndex + 1
+        prevIndex === carousel.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3000); // change every 3 seconds
-
+    }, 3000);
     return () => clearInterval(interval);
-  }, [products]);
+  }, [carousel]);
 
   useEffect(() => {
-    // Filter products based on the search query
-    console.log("Query:", query); // Log the query to check its value
-    if (query) {
+    // Treat empty string "" as a valid search (returns all products)
+    if (query !== null) {
+      //query matlb serch krna samje 
+      const q = query.toLowerCase();
       const filtered = products.filter((product) =>
-        product.title.toLowerCase().includes(query.toLowerCase())
+        product.title.toLowerCase().includes(q)
       );
-      setProducts(filtered);
+      setFilteredProducts(filtered.length > 0 ? filtered : products);
     } else {
-      setFilteredProducts(products); // Show all products if no query
+      setFilteredProducts(products);
     }
-  }, [query]);
+  }, [query, products]);
 
   return (
     <div>
       <main className="p-6 text-center">
         {/* 🟡 Carousel Banner */}
         <p className="text-2xl text-gray-800 font-bold font-serif mb-6">
-  Latest Designs
-</p>
-
+          Latest Designs
+        </p>
 
         <div className="relative w-full h-[90vh] overflow-hidden">
           <div
@@ -69,7 +71,7 @@ const Home = () => {
               width: `${carousel.slice(0, 10).length * 35}%`,
             }}
           >
-            {carousel.slice(0,10).map((carousel) => (
+            {carousel.slice(0, 10).map((carousel) => (
               <div
                 key={carousel._id}
                 className="w-full flex-shrink-0 flex justify-center items-center h-full"
@@ -87,7 +89,7 @@ const Home = () => {
         {/* 🔲 Below section for all products */}
         <p className="mt-8 text-lg text-gray-700 font-semibold">All Products</p>
         <div className="flex flex-wrap justify-center gap-6 p-6">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <ProductCard
               key={product._id}
               product={product}

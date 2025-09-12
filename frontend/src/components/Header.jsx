@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import SignOutButton from "./SignOutButton";
 import axiosInstance from "../helper/axiosInstance";
+import { getRole } from "../helper/auth";
 // import Cookies from "js-cookie";
 
 const Header = () => {
@@ -8,47 +10,44 @@ const Header = () => {
   const [goldPrice, setGoldPrice] = useState(null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Check for authToken and role in localStorage
-  const hasAuthToken = !!localStorage.getItem("authToken");
-  const role = localStorage.getItem("role");
+  // Role and auth state
+  const role = getRole();
 
-  // Fetch user profile if authToken exists, log if not
-  useEffect(() => {
-    if (hasAuthToken) {
-      const fetchUserProfile = async () => {
-        try {
-          const authToken = localStorage.getItem("authToken");
-          const response = await axiosInstance.get("/user", {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          });
-          setUser(response.data.user); // response.data.user is the user object
-          console.log("User profile:", response.data.user); // Log user profile
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-        }
-      };
-      fetchUserProfile();
-    } else {
-      console.log("authToken cookie not present");
+  // Fetch user/admin profile based on role
+  const fetchUserProfile = async () => {
+    if (!localStorage.getItem("authToken")) {
+      setUser(null);
+      return;
     }
-  }, [hasAuthToken]);
+    try {
+      if (getRole() === "admin") {
+        const res = await axiosInstance.get("/admin/get");
+        setUser(res.data.admin);
+      } else {
+        const response = await axiosInstance.get("/user");
+        setUser(response.data.user);
+      }
+    } catch (error) {
+      setUser(null);
+    }
+  };
 
-  // Fetch gold price
+  useEffect(() => {
+    fetchUserProfile();
+    const handler = () => fetchUserProfile();
+    window.addEventListener("auth-changed", handler);
+    return () => window.removeEventListener("auth-changed", handler);
+  }, []);
+
+  // Fetch gold price from backend
   useEffect(() => {
     const fetchGoldPrice = async () => {
       try {
-        const response = await fetch("https://www.goldapi.io/api/XAU/INR", {
-          method: "GET",
-          headers: {
-            "x-access-token": "goldapi-gjehnsm9o3iy8g-io",
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-        setGoldPrice(data.price_gram_24k.toFixed(2));
+        const res = await axiosInstance.get("/prices");
+        const gold = res.data.find((p) => p.metal === "gold");
+        setGoldPrice(gold ? Number(gold.pricePerGram).toFixed(2) : null);
       } catch (error) {
         console.error("Error fetching gold price:", error);
       }
@@ -57,22 +56,35 @@ const Header = () => {
   }, []);
 
   const handleSearch = (event) => {
-    event.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/?search=${searchQuery}`);
-    }
+    event.preventDefault(); // Prevent form submission
   };
+
+  // Update search results as user types
+  useEffect(() => {
+    const searchTimer = setTimeout(() => {
+      // Only drive navigation from header search when on the Home page
+      if (location.pathname === "/") {
+        if (searchQuery.trim() !== "") {
+          navigate(`/?search=${encodeURIComponent(searchQuery)}`);
+        } else {
+          navigate("/"); // Clear search when query is empty
+        }
+      }
+    }, 300);
+
+    return () => clearTimeout(searchTimer);
+  }, [searchQuery, navigate, location.pathname]);
 
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-yellow-500 to-yellow-700 py-3 px-6 text-white shadow-md">
-      <nav className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-3 md:gap-0">
+      <nav className="flex flex-col md:flex-row justify-between items-center max-w-[1800px] mx-auto gap-3 md:gap-0 w-full">
         {/* Left - Logo & Add Product */}
         <div className="flex items-center gap-4 text-base font-semibold">
           <Link to="/" className="flex items-center text-white no-underline">
             <img
               src="/logo.png"
               alt="Amit Jewellers Logo"
-              className="w-7 h-7 mr-2"
+              className="w-8 h-8 mr-2 rounded-full ring-2 ring-white/70 bg-white object-cover"
             />
             Amit Jewellers
           </Link>
@@ -88,24 +100,18 @@ const Header = () => {
         </div>
 
         {/* Center - Search */}
-        <form
-          onSubmit={handleSearch}
-          className="flex items-center bg-white rounded-full px-3 py-1 shadow-md"
-        >
+        <div className="flex items-center bg-white rounded-full px-3 py-1 shadow-md">
           <input
             type="text"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-3 py-1 outline-none text-black rounded-l-full w-36 md:w-52 text-sm"
+            className="px-3 py-1 outline-none text-black rounded-l-full w-44 md:w-64 text-sm"
           />
-          <button
-            type="submit"
-            className="bg-yellow-500 text-white px-4 py-1 rounded-r-full hover:bg-yellow-700 transition text-sm"
-          >
+          <span className="bg-yellow-500 text-white px-4 py-1 rounded-r-full text-sm">
             🔍
-          </button>
-        </form>
+          </span>
+        </div>
 
         {/* Right - Gold Price and User Profile */}
         <div className="flex items-center gap-4">
@@ -114,19 +120,24 @@ const Header = () => {
               ? `💰 Gold 24K: ₹${goldPrice}/g`
               : "Fetching gold price..."}
           </div>
-          {hasAuthToken && user && user.profile && user.name ? (
+          {localStorage.getItem("authToken") ? (
             <div className="flex items-center gap-2">
-              <img
-                src={user.profile}
-                alt="Profile"
-                className="w-8 h-8 rounded-full border-2 border-white"
-              />
-              <span className="text-sm font-medium">{user.name}</span>
+              {user && user.profile ? (
+                <img
+                  src={user.profile}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full border-2 border-white"
+                />
+              ) : null}
+              <span className="text-sm font-medium">
+                {user?.name || (role === "admin" ? "Admin" : "User")}
+              </span>
+              <SignOutButton />
             </div>
           ) : (
             <Link
               to="/login"
-              className="bg-white text-yellow-700 font-medium px-3 py-1 rounded-full hover:bg-yellow-100 transition shadow-sm text-sm"
+              className="bg-white text-yellow-700 font-medium px-3 py-1 rounded-full hover:bg-yellow-100 transition shadow sm text-sm"
             >
               Login
             </Link>

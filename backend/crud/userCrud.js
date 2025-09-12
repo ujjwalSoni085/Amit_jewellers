@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { signAccessToken } = require("../utils/jwt");
 
 // Add a new user
 const addUser = async (req, res) => {
@@ -26,14 +27,12 @@ const loginUser = async (req, res) => {
   try {
     console.log("Login request body:", req.body); // Log the request body
     const { email, password } = req.body;
-    console.log("Login attempt with email:", email);
 
     // Check if the user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
     // Compare the provided password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -41,30 +40,25 @@ const loginUser = async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      "usersecret_key",
-      {
-        expiresIn: "1d", // Token expires in 1 day
-      }
-    );
+    const payload = { id: user._id, email: user.email };
+    const accessToken = signAccessToken(payload, "user");
 
-    // If login is successful, return user details (excluding password)
-    const { password: _, ...userDetails } = user.toObject();
-    res.status(200).json({ message: "Login successful", authToken : token , role: "user" });
+    res
+      .status(200)
+      .json({
+        message: "Login successful",
+        authToken: accessToken,
+        role: "user",
+      });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 const getUser = async (req, res) => {
-
   try {
-    console.log("Get user request",req.user); // Log the request
     const userId = req.user.id; // Extract the user ID from req.user
-console.log("User ID from token:", userId); // Log the user ID
-    // Find the user by the ID in the token
-    const user = await User.findById(userId).select("-password"); 
+    const user = await User.findById(userId).select("-password");
     // Exclude the password field
     if (!user) {
       return res.status(404).json({ error: "User not found" });

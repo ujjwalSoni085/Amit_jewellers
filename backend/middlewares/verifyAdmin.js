@@ -1,6 +1,6 @@
 const { verifyAccessToken } = require("../utils/jwt");
 
-module.exports = function verifyUserToken(req, res, next) {
+module.exports = function verifyAdminToken(req, res, next) {
   try {
     const authHeader = req.headers.authorization || "";
     const isBearer = authHeader.startsWith("Bearer ");
@@ -10,9 +10,9 @@ module.exports = function verifyUserToken(req, res, next) {
       return res.status(401).json({ message: "Authorization token missing" });
     }
 
-    const decoded = verifyAccessToken(token, "user");
-    if (!decoded || decoded.role !== "user") {
-      return res.status(403).json({ message: "User access required" });
+    const decoded = verifyAccessToken(token, "admin");
+    if (!decoded || decoded.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
     }
 
     req.user = decoded;

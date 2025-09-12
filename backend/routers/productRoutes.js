@@ -7,14 +7,14 @@ const {
   deleteProduct,
 } = require("../crud/productCrud");
 
-const verifyToken = require("../middlewares/verifyToken");
+const verifyAdmin = require("../middlewares/verifyAdmin");
 
 const router = express.Router();
 
-router.post("/add", addProduct);
+router.post("/add", verifyAdmin, addProduct);
 router.get("/", getProducts);
 router.get("/:id", getProductById);
-router.put("/update/:id", updateProduct);
-router.delete("/delete/:id",verifyToken, deleteProduct);
+router.put("/update/:id", verifyAdmin, updateProduct);
+router.delete("/delete/:id", verifyAdmin, deleteProduct);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import React, { Profiler, useState } from "react";
 import axiosInstance from "../helper/axiosInstance"; // Adjust the path as needed
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -10,6 +10,7 @@ function Signup() {
     phoneNumber: "",
     profile: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,6 +20,7 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const response = await axiosInstance.post("/user/signup", formData);
       console.log("signup successful:", response.data);
@@ -28,6 +30,8 @@ function Signup() {
     } catch (error) {
       console.error("signup failed:", error.response?.data || error.message);
       // Handle signup error
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,11 +134,25 @@ function Signup() {
           </div>
           <button
             type="submit"
-            className="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300"
+            disabled={isSubmitting}
+            className={`w-full bg-yellow-500 text-white py-2 px-4 rounded-lg transition duration-300 ${
+              isSubmitting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-yellow-600"
+            }`}
           >
-            signup
+            {isSubmitting ? "Signing up..." : "Sign up"}
           </button>
         </form>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-yellow-600 hover:text-yellow-700 font-medium"
+          >
+            Login here
+          </Link>
+        </p>
       </div>
     </div>
   );
