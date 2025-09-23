@@ -10,11 +10,11 @@ const Footer = () => {
           <img 
             src="/papa.jpg" 
             alt="Papa" 
-            className="w-24 h-28 rounded-lg border-2 border-yellow-400 mr-4 object-cover"
+            className=" w-40 h-40 rounded-lg border-2 border-yellow-400 mr-4 object-cover"
           />
           <div className="hidden md:block mt-2">
             <span className="text-base text-gray-300 font-semibold">Pro Nirmal Soni</span>
-            <p className="text-sm text-gray-500">Founder & Inspiration</p>
+            <p className="text-sm text-gray-500"> Inspiration</p>
           </div>
         </div>
 

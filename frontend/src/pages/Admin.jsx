@@ -15,9 +15,9 @@ const Admin = () => {
   });
 
  const productDelete = (id) => {
-     if (!confirm("Delete this product? This action cannot be undone.")) return;
+     if (!confirm("Delete this product ")) return;//show popup to confirm delete
      axiosInstance
-       .delete(`/products/delete/${id}`)
+       .delete(`/products/delete/${id}`)//if user conforms then call delete api
        .then(() => {
          setProducts((prevProducts) =>
            prevProducts.filter((product) => product._id !== id)

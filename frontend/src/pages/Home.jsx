@@ -30,7 +30,7 @@ const Home = () => {
   const handleViewProduct = (id) => {
     navigate(`/product/${id}`);
   };
-
+//craousel task for 3 seca
   useEffect(() => {
     if (!carousel || carousel.length === 0) return;
     const interval = setInterval(() => {
@@ -47,7 +47,7 @@ const Home = () => {
       //query matlb serch krna samje 
       const q = query.toLowerCase();
       const filtered = products.filter((product) =>
-        product.title.toLowerCase().includes(q)
+        product.title.toLowerCase().includes(q)//convert all characters to lowercase
       );
       setFilteredProducts(filtered.length > 0 ? filtered : products);
     } else {

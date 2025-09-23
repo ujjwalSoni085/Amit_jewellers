@@ -19,7 +19,7 @@ const Header = () => {
   const fetchUserProfile = async () => {
     if (!localStorage.getItem("authToken")) {
       setUser(null);
-      return;
+      return;//both update the user or admin 
     }
     try {
       if (getRole() === "admin") {
@@ -36,7 +36,7 @@ const Header = () => {
 
   useEffect(() => {
     fetchUserProfile();
-    const handler = () => fetchUserProfile();
+    const handler = () => fetchUserProfile();//for extra logic additoin other wise we can also directly call fetchUserProfile
     window.addEventListener("auth-changed", handler);
     return () => window.removeEventListener("auth-changed", handler);
   }, []);
@@ -47,7 +47,7 @@ const Header = () => {
       try {
         const res = await axiosInstance.get("/prices");
         const gold = res.data.find((p) => p.metal === "gold");
-        setGoldPrice(gold ? Number(gold.pricePerGram).toFixed(2) : null);
+        setGoldPrice(gold ? Number(gold.pricePerGram).toFixed(2) : null);//price per gram and round it to 2 decimal places
       } catch (error) {
         console.error("Error fetching gold price:", error);
       }

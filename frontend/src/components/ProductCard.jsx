@@ -1,13 +1,13 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
-const ProductCard = ({ product, onDelete, onViewProduct }) => {
+const ProductCard = ({ product, onDelete, onViewProduct }) => {//insted of passing id we can also pass the whole product object
   const location = useLocation();
 
   const formatPrice = (v) => {
-    const num = Number(v);
-    if (!Number.isFinite(num) || num <= 0) return '—';
-    try { return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num); } catch { return `₹${num}`; }
+    const num = Number(v);//convert to number
+    if (!Number.isFinite(num) || num <= 0) return '—';//if price is not valid or less than equal to 0 return dash
+    try { return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num); } catch { return `₹${num}`; }//if price fail then just prefix with ₹
   };
 
   return (
