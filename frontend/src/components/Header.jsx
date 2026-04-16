@@ -3,12 +3,14 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import SignOutButton from "./SignOutButton";
 import axiosInstance from "../helper/axiosInstance";
 import { getRole } from "../helper/auth";
+import { formatPrice } from "../utils/formatPrice";
 // import Cookies from "js-cookie";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [goldPrice, setGoldPrice] = useState(null);
   const [user, setUser] = useState(null);
+  const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -23,7 +25,7 @@ const Header = () => {
     }
     try {
       if (getRole() === "admin") {
-        const res = await axiosInstance.get("/admin/get");
+        const res = await axiosInstance.get("/admin/");
         setUser(res.data.admin);
       } else {
         const response = await axiosInstance.get("/user");
@@ -40,6 +42,28 @@ const Header = () => {
     window.addEventListener("auth-changed", handler);
     return () => window.removeEventListener("auth-changed", handler);
   }, []);
+
+  // Fetch cart count
+  const fetchCartCount = async () => {
+    if (!localStorage.getItem("authToken") || role === "admin") {
+      setCartItemCount(0);
+      return;
+    }
+    try {
+      const res = await axiosInstance.get("/cart");
+      const totalItems = res.data.cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+      setCartItemCount(totalItems);
+    } catch (error) {
+      setCartItemCount(0);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartCount();
+    const handler = () => fetchCartCount();
+    window.addEventListener("cart-updated", handler);
+    return () => window.removeEventListener("cart-updated", handler);
+  }, [role]);
 
   // Fetch gold price from backend
   useEffect(() => {
@@ -113,13 +137,27 @@ const Header = () => {
           </span>
         </div>
 
-        {/* Right - Gold Price and User Profile */}
+        {/* Right - Gold Price, Cart, and User Profile */}
         <div className="flex items-center gap-4">
           <div className="text-sm font-medium text-white">
             {goldPrice
-              ? `💰 Gold 24K: ₹${goldPrice}/g`
+              ? `💰 Gold 24K: ${formatPrice(goldPrice)}/g`
               : "Fetching gold price..."}
           </div>
+          {/* Cart Icon - Only show for logged-in users (not admin) */}
+          {localStorage.getItem("authToken") && role === "user" && (
+            <Link
+              to="/cart"
+              className="relative bg-white text-yellow-700 font-medium px-3 py-1 rounded-full hover:bg-yellow-100 transition shadow-sm text-sm flex items-center gap-1"
+            >
+              🛒 Cart
+              {cartItemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartItemCount > 9 ? "9+" : cartItemCount}
+                </span>
+              )}
+            </Link>
+          )}
           {localStorage.getItem("authToken") ? (
             <div className="flex items-center gap-2">
               {user && user.profile ? (

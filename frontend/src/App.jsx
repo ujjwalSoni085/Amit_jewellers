@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import CreateProduct from "./pages/CreateProduct";
@@ -7,25 +7,17 @@ import Footer from "./components/Footer";
 import Product from "./pages/Product";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
-import axiosInstance from "./helper/axiosInstance"; // Import Axios instance
 import Admin from "./pages/Admin";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
+import Orders from "./pages/Orders";
 import "./App.css"; // import CSS for scroll animation
 import AdminLogin from "./pages/AdminLogin";
 import Adminsignup from "./pages/Adminsignup";
 import RequireAdmin from "./components/RequireAdmin";
 
 export default function App() {
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    axiosInstance
-      .get("/admin/access")
-      .then((response) => {
-        if (response.status === 200) setIsAdmin(true);
-      })
-      .catch(() => setIsAdmin(false));
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Router>
@@ -40,6 +32,10 @@ export default function App() {
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/signup" element={<Adminsignup />} />
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-success/:id" element={<OrderSuccess />} />
+            <Route path="/orders" element={<Orders />} />
           </Routes>
         </main>
         <Footer />

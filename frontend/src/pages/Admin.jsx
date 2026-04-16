@@ -5,6 +5,7 @@ import ProductCard from "../components/ProductCard";
 
 
 const Admin = () => {
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
   const [prices, setPrices] = useState([]);

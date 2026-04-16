@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../helper/axiosInstance';
+import { getRole } from '../helper/auth';
+import { formatPrice } from '../utils/formatPrice';
 
 function Product() {
   const { id } = useParams();
+  const navigate = useNavigate();
   //single product state inner
   const [product, setProduct] = useState(null);
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [cartMessage, setCartMessage] = useState('');
 
   useEffect(() => {
     axiosInstance.get(`/products/${id}`)
@@ -17,11 +22,31 @@ function Product() {
       });
   }, [id]);
 
-  const formatPrice = (value) => {
+
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("authToken");
+    const role = getRole();
+
+    if (!token || role !== "user") {
+      if (confirm("Please login to add items to cart. Go to login page?")) {
+        navigate("/login");
+      }
+      return;
+    }
+
+    setAddingToCart(true);
+    setCartMessage("");
     try {
-      return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
-    } catch {
-      return `₹${value}`;
+      await axiosInstance.post("/cart/add", { productId: id, quantity: 1 });
+      setCartMessage("Added to cart!");
+      window.dispatchEvent(new Event("cart-updated"));
+      setTimeout(() => setCartMessage(""), 3000);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      setCartMessage("Failed to add to cart. Please try again.");
+      setTimeout(() => setCartMessage(""), 3000);
+    } finally {
+      setAddingToCart(false);
     }
   };
 
@@ -56,22 +81,44 @@ function Product() {
                   <span className="text-2xl font-bold text-yellow-700">{formatPrice(product.price)}</span>
                 </div>
 
-                <div className="mt-6">
-                  {(() => {
-                    const phone = import.meta.env.VITE_WHATSAPP_NUMBER || "919999999999"; // E.g., country code + number
-                    const msg = `Hello! I'm interested in ${product.title} (${product._id}). Weight: ${product.weight}g, metal: ${product.metalType}.`;
-                    const href = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-                    return (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex w-full justify-center items-center rounded-lg bg-green-500 text-white px-4 py-2.5 font-medium hover:bg-green-600 transition"
-                      >
-                        Get queries on WhatsApp
-                      </a>
-                    );
-                  })()}
+                <div className="mt-6 space-y-3">
+                  {cartMessage && (
+                    <div className={`p-3 rounded-lg text-center ${
+                      cartMessage.includes("Added") 
+                        ? "bg-green-100 text-green-700" 
+                        : "bg-red-100 text-red-700"
+                    }`}>
+                      {cartMessage}
+                    </div>
+                  )}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={addingToCart}
+                      className={`flex-1 inline-flex justify-center items-center rounded-lg px-4 py-2.5 font-medium transition ${
+                        addingToCart
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-yellow-500 hover:bg-yellow-600 text-white"
+                      }`}
+                    >
+                      {addingToCart ? "Adding..." : "🛒 Add to Cart"}
+                    </button>
+                    {(() => {
+                      const phone = import.meta.env.VITE_WHATSAPP_NUMBER || "919999999999";
+                      const msg = `Hello! I'm interested in ${product.title} (${product._id}). Weight: ${product.weight}g, metal: ${product.metalType}.`;
+                      const href = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+                      return (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 inline-flex justify-center items-center rounded-lg bg-green-500 text-white px-4 py-2.5 font-medium hover:bg-green-600 transition"
+                        >
+                          💬 WhatsApp
+                        </a>
+                      );
+                    })()}
+                  </div>
                 </div>
               </div>
             </div>

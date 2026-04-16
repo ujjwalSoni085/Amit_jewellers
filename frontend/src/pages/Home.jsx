@@ -13,6 +13,13 @@ const Home = () => {
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search).get("search");
 
+  
+  useEffect(() => {
+    axiosInstance
+      .get("/carousel")
+      .then((response) => setCarousel(response.data))
+      .catch((error) => console.error("Error fetching carousel:", error));
+  }, []);
   useEffect(() => {
     axiosInstance
       .get("/products")
@@ -20,17 +27,11 @@ const Home = () => {
       //p->product - details, name , title, price, weight, image
       .catch((error) => console.error("Error fetching products:", error));
   }, []);
-  useEffect(() => {
-    axiosInstance
-      .get("/carousel")
-      .then((response) => setCarousel(response.data))
-      .catch((error) => console.error("Error fetching carousel:", error));
-  }, []);
 
   const handleViewProduct = (id) => {
     navigate(`/product/${id}`);
   };
-//craousel task for 3 seca
+//craousel task for 3 sec
   useEffect(() => {
     if (!carousel || carousel.length === 0) return;
     const interval = setInterval(() => {
@@ -62,7 +63,6 @@ const Home = () => {
         <p className="text-2xl text-gray-800 font-bold font-serif mb-6">
           Latest Designs
         </p>
-
         <div className="relative w-full h-[90vh] overflow-hidden">
           <div
             className="flex transition-transform duration-700 ease-in-out h-full"

@@ -1,10 +1,10 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors"); //loyal
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const app = express();
 app.use(express.json());
-const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 // CORS allowed origins from environment (comma-separated). Fallback to localhost in dev.
@@ -13,7 +13,7 @@ const allowedOrigins = (process.env.CORS_ORIGINS || "")
   .map((o) => o.trim())
   .filter(Boolean);
 if (allowedOrigins.length === 0 && process.env.NODE_ENV !== "production") {
-  allowedOrigins.push("http://localhost:5173", "http://127.0.0.1:5173");
+  allowedOrigins.push("http://localhost:5173","http://127.0.0.1:5173");
 }
 
 app.use(
@@ -24,7 +24,7 @@ app.use(
       }
       return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true, //credentials means token
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -32,10 +32,7 @@ app.use(
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("DB Connection Error:", err));
 
@@ -46,6 +43,8 @@ const userRoutes = require("./routers/userRoutes");
 const adminRoutes = require("./routers/adminRoutes");
 const authRoutes = require("./routers/authRoutes");
 const priceRoutes = require("./routers/priceRoutes");
+const cartRoutes = require("./routers/cartRoutes");
+const orderRoutes = require("./routers/orderRoutes");
 
 // Use Routes
 app.use("/api/products", productRoutes);
@@ -54,6 +53,9 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/prices", priceRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

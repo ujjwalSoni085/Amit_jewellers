@@ -1,6 +1,7 @@
 import React, { use, useState } from "react";
 import axiosInstance from "../helper/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "../utils/formatPrice";
 
 
 
@@ -134,7 +135,7 @@ const CreateProduct = () => {
               Add Product
             </button>
             <div className="text-sm text-gray-600 mt-2">
-              Estimated price: {computed ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(computed) : '—'}
+              Estimated price: {computed ? formatPrice(computed) : '—'}
             </div>
           </form>
         </div>

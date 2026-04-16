@@ -100,6 +100,15 @@ function Login() {
             Create new account
           </Link>
         </p>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          {" "}
+          <Link
+            to="/admin/login"
+            className="text-yellow-600 hover:text-yellow-700 font-medium"
+          >
+            Login as a Admin
+          </Link>
+        </p>
       </div>
     </div>
   );
