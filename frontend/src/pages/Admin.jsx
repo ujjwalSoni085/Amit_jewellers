@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../helper/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import { toast } from "react-hot-toast";
 
 
 const Admin = () => {
@@ -16,13 +17,13 @@ const Admin = () => {
   });
 
  const productDelete = (id) => {
-     if (!confirm("Delete this product ")) return;//show popup to confirm delete
      axiosInstance
-       .delete(`/products/delete/${id}`)//if user conforms then call delete api
+       .delete(`/products/delete/${id}`)
        .then(() => {
          setProducts((prevProducts) =>
            prevProducts.filter((product) => product._id !== id)
          );
+         toast.success("Product deleted successfully");
        })
        .catch((error) => console.error("Error deleting product:", error));
    };
@@ -60,8 +61,8 @@ const Admin = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Remove this carousel item?")) return;
     await axiosInstance.delete(`/carousel/delete/${id}`);
+    toast.success("Carousel item removed");
     fetchCarousel();
   };
 

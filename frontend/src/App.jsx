@@ -12,10 +12,12 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Orders from "./pages/Orders";
+import Wishlist from "./pages/Wishlist";
 import "./App.css"; // import CSS for scroll animation
 import AdminLogin from "./pages/AdminLogin";
 import Adminsignup from "./pages/Adminsignup";
 import RequireAdmin from "./components/RequireAdmin";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -36,6 +38,8 @@ export default function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-success/:id" element={<OrderSuccess />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />

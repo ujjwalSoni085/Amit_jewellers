@@ -4,8 +4,8 @@ const { getPricePerGram } = require("../utils/metalService");
 // Add a new product
 const addProduct = async (req, res) => {
     try {
-        const { title, weight, metalType, image, description } = req.body;
-        const newProduct = new Product({ title, weight, metalType, image, description });
+        const { title, weight, metalType, image, description, category, purity, images, inStock, tags } = req.body;
+        const newProduct = new Product({ title, weight, metalType, image, description, category, purity, images, inStock, tags });
         await newProduct.save();
         res.status(201).json(newProduct);
     } catch (error) {
@@ -16,17 +16,51 @@ const addProduct = async (req, res) => {
 // Get all products with computed price with api 
 const getProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        const { search, category, purity, minPrice, maxPrice, inStock, page = 1, limit = 10 } = req.query;
+
+        // Build base Mongoose query
+        const query = {};
+        if (search) {
+            query.title = { $regex: search, $options: "i" };
+        }
+        if (category) query.category = category;
+        if (purity) query.purity = purity;
+        if (inStock !== undefined) query.inStock = inStock === 'true';
+
+        // Fetch products matching mongo filters
+        const products = await Product.find(query);
         const gold = await getPricePerGram("gold");
         const silver = await getPricePerGram("silver");
-        const priced = products.map(p => {
+        
+        let priced = products.map(p => {
             let rate = null;
             if (p.metalType === 'gold') rate = gold;
             else if (p.metalType === 'silver') rate = silver;
             const price = Number.isFinite(rate) && rate > 0 ? Math.round(rate * p.weight) : null;
             return { ...p.toObject(), price };
         });
-        res.json(priced);
+
+        // Filter by dynamic price if provided
+        if (minPrice || maxPrice) {
+            const min = parseFloat(minPrice) || 0;
+            const max = parseFloat(maxPrice) || Infinity;
+            priced = priced.filter(p => p.price !== null && p.price >= min && p.price <= max);
+        }
+
+        // Pagination
+        const pageNumber = parseInt(page, 10);
+        const pageSize = parseInt(limit, 10);
+        const totalProducts = priced.length;
+        const totalPages = Math.ceil(totalProducts / pageSize);
+        const startIndex = (pageNumber - 1) * pageSize;
+        const paginatedProducts = priced.slice(startIndex, startIndex + pageSize);
+
+        res.json({
+            products: paginatedProducts,
+            totalPages,
+            currentPage: pageNumber,
+            totalProducts
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -49,10 +83,10 @@ const getProductById = async (req, res) => {
 // Update a product
 const updateProduct = async (req, res) => {
     try {
-        const { title, weight, metalType, image, description } = req.body;
+        const { title, weight, metalType, image, description, category, purity, images, inStock, tags } = req.body;
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id,
-            { title, weight, metalType, image, description },
+            { title, weight, metalType, image, description, category, purity, images, inStock, tags },
             { new: true }
         );
         res.json(updatedProduct);

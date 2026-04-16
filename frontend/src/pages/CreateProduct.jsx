@@ -11,8 +11,14 @@ const CreateProduct = () => {
     title: "",
     weight: "",
     metalType: "gold",
-    image: "",
     description: "",
+    category: "Rings",
+    purity: "22K",
+    image1: "",
+    image2: "",
+    image3: "",
+    tags: "",
+    inStock: true,
   });
 
   const [message, setMessage] = useState("");
@@ -21,20 +27,37 @@ const CreateProduct = () => {
 
   // Handle input change
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct({ ...product, [name]: value });
-    if (name === 'image') setPreview(value);
+    const { name, value, type, checked } = e.target;
+    setProduct({ ...product, [name]: type === 'checkbox' ? checked : value });
+    if (name === 'image1') setPreview(value);
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Product data:", product);
-      const response = await axiosInstance.post("/products/add", product);
+      const payload = {
+        title: product.title,
+        weight: product.weight,
+        metalType: product.metalType,
+        description: product.description,
+        category: product.category,
+        purity: product.purity,
+        image: product.image1,
+        images: [product.image1, product.image2, product.image3].filter(Boolean),
+        tags: product.tags ? product.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+        inStock: product.inStock
+      };
+      
+      console.log("Product data:", payload);
+      const response = await axiosInstance.post("/products/add", payload);
       if (response.status === 201) {
         setMessage("Product added successfully!");
-        setProduct({ title: "", weight: "", metalType: "gold", image: "", description: "" });
+        setProduct({ 
+          title: "", weight: "", metalType: "gold", description: "", 
+          category: "Rings", purity: "22K", image1: "", image2: "", image3: "", 
+          tags: "", inStock: true 
+        });
         setPreview("");
         navigate("/");
       } else {
@@ -102,11 +125,48 @@ const CreateProduct = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium">Image URL</label>
+              <label className="block text-gray-700 font-medium">Category</label>
+              <select
+                name="category"
+                value={product.category}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+              >
+                <option value="Rings">Rings</option>
+                <option value="Necklaces">Necklaces</option>
+                <option value="Earrings">Earrings</option>
+                <option value="Bracelets">Bracelets</option>
+                <option value="Pendants">Pendants</option>
+                <option value="Chains">Chains</option>
+                <option value="Bangles">Bangles</option>
+                <option value="Mangalsutras">Mangalsutras</option>
+                <option value="Coins">Coins</option>
+                <option value="Sets">Sets</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium">Purity</label>
+              <select
+                name="purity"
+                value={product.purity}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+              >
+                <option value="24K">24K</option>
+                <option value="22K">22K</option>
+                <option value="18K">18K</option>
+                <option value="14K">14K</option>
+                <option value="925 Sterling (Silver)">925 Sterling (Silver)</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium">Image 1 URL (Primary)</label>
               <input
                 type="text"
-                name="image"
-                value={product.image}
+                name="image1"
+                value={product.image1}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
                 required
@@ -114,6 +174,28 @@ const CreateProduct = () => {
               {preview ? (
                 <img src={preview} alt="Preview" className="mt-2 w-full h-40 object-cover rounded" />
               ) : null}
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium">Image 2 URL (Optional)</label>
+              <input
+                type="text"
+                name="image2"
+                value={product.image2}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium">Image 3 URL (Optional)</label>
+              <input
+                type="text"
+                name="image3"
+                value={product.image3}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+              />
             </div>
 
             <div className="mb-4">
@@ -126,6 +208,29 @@ const CreateProduct = () => {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
                 required
               />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium">Tags (comma separated)</label>
+              <input
+                type="text"
+                name="tags"
+                value={product.tags}
+                onChange={handleChange}
+                placeholder="e.g. bestseller, wedding, new arrival"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+              />
+            </div>
+
+            <div className="mb-4 flex items-center">
+              <input
+                type="checkbox"
+                name="inStock"
+                checked={product.inStock}
+                onChange={handleChange}
+                className="w-5 h-5 text-yellow-500 border-gray-300 rounded focus:ring-yellow-400"
+              />
+              <label className="ml-2 block text-gray-700 font-medium">In Stock</label>
             </div>
 
             <button

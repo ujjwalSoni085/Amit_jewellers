@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../helper/axiosInstance';
 import { getRole } from '../helper/auth';
 import { formatPrice } from '../utils/formatPrice';
+import { toast } from 'react-hot-toast';
+import ReviewSection from '../components/ReviewSection';
 
 function Product() {
   const { id } = useParams();
   const navigate = useNavigate();
-  //single product state inner
   const [product, setProduct] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
   const [cartMessage, setCartMessage] = useState('');
+  const [inWishlist, setInWishlist] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
     axiosInstance.get(`/products/${id}`)
@@ -22,15 +25,52 @@ function Product() {
       });
   }, [id]);
 
+  /* ── Wishlist: check if this product is already saved ── */
+  const checkWishlist = useCallback(async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token || getRole() !== 'user') return;
+    try {
+      const res = await axiosInstance.get('/wishlist');
+      const products = res.data?.wishlist?.products ?? [];
+      setInWishlist(products.some((p) => p._id === id));
+    } catch { /* silent */ }
+  }, [id]);
+
+  useEffect(() => { checkWishlist(); }, [checkWishlist]);
+
+  /* ── Wishlist toggle ── */
+  const handleWishlistToggle = async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token || getRole() !== 'user') {
+      toast.error('Please login to use the wishlist');
+      navigate('/login');
+      return;
+    }
+    setWishlistLoading(true);
+    try {
+      if (inWishlist) {
+        await axiosInstance.delete(`/wishlist/remove/${id}`);
+        setInWishlist(false);
+        toast.success('Removed from wishlist');
+      } else {
+        await axiosInstance.post('/wishlist/add', { productId: id });
+        setInWishlist(true);
+        toast.success('Added to wishlist ❤️');
+      }
+    } catch {
+      toast.error('Something went wrong. Try again.');
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
 
   const handleAddToCart = async () => {
     const token = localStorage.getItem("authToken");
     const role = getRole();
 
     if (!token || role !== "user") {
-      if (confirm("Please login to add items to cart. Go to login page?")) {
-        navigate("/login");
-      }
+      toast.error("Please login to add items to cart");
+      navigate("/login");
       return;
     }
 
@@ -91,7 +131,7 @@ function Product() {
                       {cartMessage}
                     </div>
                   )}
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 flex-wrap">
                     <button
                       onClick={handleAddToCart}
                       disabled={addingToCart}
@@ -103,6 +143,31 @@ function Product() {
                     >
                       {addingToCart ? "Adding..." : "🛒 Add to Cart"}
                     </button>
+
+                    {/* ── Wishlist heart button ── */}
+                    <button
+                      onClick={handleWishlistToggle}
+                      disabled={wishlistLoading}
+                      title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+                      className={`inline-flex justify-center items-center gap-1.5 rounded-lg px-4 py-2.5 font-medium border transition ${
+                        wishlistLoading
+                          ? 'opacity-60 cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400'
+                          : inWishlist
+                          ? 'border-red-300 bg-red-50 text-red-600 hover:bg-red-100'
+                          : 'border-gray-200 bg-white text-gray-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50'
+                      }`}
+                    >
+                      <span
+                        className="text-lg transition-transform duration-150"
+                        style={{ transform: inWishlist ? 'scale(1.2)' : 'scale(1)' }}
+                      >
+                        {inWishlist ? '❤️' : '🤍'}
+                      </span>
+                      <span className="text-sm">
+                        {wishlistLoading ? '...' : inWishlist ? 'Saved' : 'Wishlist'}
+                      </span>
+                    </button>
+
                     {(() => {
                       const phone = import.meta.env.VITE_WHATSAPP_NUMBER || "919999999999";
                       const msg = `Hello! I'm interested in ${product.title} (${product._id}). Weight: ${product.weight}g, metal: ${product.metalType}.`;
@@ -138,6 +203,9 @@ function Product() {
             </div>
           )}
         </div>
+
+        {/* ── Reviews ── */}
+        <ReviewSection productId={id} />
       </div>
     </div>
   );

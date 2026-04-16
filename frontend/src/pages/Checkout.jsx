@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../helper/axiosInstance";
 import { getRole } from "../helper/auth";
 import { formatPrice } from "../utils/formatPrice";
+import { toast } from "react-hot-toast";
 
 const Checkout = () => {
   const [cart, setCart] = useState(null);
@@ -86,7 +87,7 @@ const Checkout = () => {
       navigate(`/order-success/${res.data.order._id}`);
     } catch (error) {
       console.error("Error placing order:", error);
-      alert("Failed to place order. Please try again.");
+      toast.error("Failed to place order. Please try again.");
     } finally {
       setSubmitting(false);
     }

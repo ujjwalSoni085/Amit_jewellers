@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../helper/axiosInstance";
 import { getRole } from "../helper/auth";
 import { formatPrice } from "../utils/formatPrice";
+import { toast } from "react-hot-toast";
 
 const Cart = () => {
   const [cart, setCart] = useState(null);
@@ -45,9 +46,9 @@ const Cart = () => {
   };
 
   const removeItem = async (itemId) => {
-    if (!confirm("Remove this item from cart?")) return;
     try {
       await axiosInstance.delete(`/cart/remove/${itemId}`);
+      toast.success("Item removed from cart");
       fetchCart();
       window.dispatchEvent(new Event("cart-updated"));
     } catch (error) {

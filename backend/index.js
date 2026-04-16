@@ -45,6 +45,8 @@ const authRoutes = require("./routers/authRoutes");
 const priceRoutes = require("./routers/priceRoutes");
 const cartRoutes = require("./routers/cartRoutes");
 const orderRoutes = require("./routers/orderRoutes");
+const wishlistRoutes = require("./routers/wishlistRoutes");
+const reviewRoutes = require("./routers/reviewRoutes");
 
 // Use Routes
 app.use("/api/products", productRoutes);
@@ -55,6 +57,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/prices", priceRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
