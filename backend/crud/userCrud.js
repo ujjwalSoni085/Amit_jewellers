@@ -69,4 +69,25 @@ const getUser = async (req, res) => {
   }
 };
 
-module.exports = { addUser, loginUser, getUser };
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, phoneNumber, savedAddress } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, phoneNumber, savedAddress },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ user: updatedUser, message: "Profile updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { addUser, loginUser, getUser, updateUser };

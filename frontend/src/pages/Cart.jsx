@@ -115,6 +115,7 @@ const Cart = () => {
                     <img
                       src={item.product.image}
                       alt={item.product.title}
+                      loading="lazy"
                       className="w-full md:w-32 h-32 object-cover rounded-lg"
                     />
                   </Link>

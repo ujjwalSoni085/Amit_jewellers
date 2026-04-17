@@ -23,6 +23,7 @@ const WishlistCard = ({ product, onRemove, onView }) => (
       <img
         src={product.image}
         alt={product.title}
+        loading="lazy"
         className="wishlist-card__img"
       />
       <div className="wishlist-card__img-overlay">

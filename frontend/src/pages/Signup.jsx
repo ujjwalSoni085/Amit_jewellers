@@ -1,6 +1,7 @@
 import React, { Profiler, useState } from "react";
 import axiosInstance from "../helper/axiosInstance"; // Adjust the path as needed
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -8,14 +9,18 @@ function Signup() {
     email: "",
     password: "",
     phoneNumber: "",
-    profile: "",
   });
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -23,13 +28,25 @@ function Signup() {
     setIsSubmitting(true);
     try {
       const response = await axiosInstance.post("/user/signup", formData);
-      console.log("signup successful:", response.data);
-      // Handle successful signup (e.g., save token, redirect, etc.)
-      // Redirect to home page after successful signup
-      navigate("/");
+      toast.success("Signup successful! Please login to continue.");
+      navigate("/login");
     } catch (error) {
+      if (error.response?.status === 422) {
+        // Validation errors
+        const backendErrors = error.response.data.errors || [];
+        const formattedErrors = {};
+        backendErrors.forEach((err) => {
+          formattedErrors[err.path] = err.msg;
+        });
+        setErrors(formattedErrors);
+        toast.error("Please fix the errors in the form.");
+      } else if (error.response?.status === 400 || error.response?.status === 409) {
+        // Business logic errors (e.g. email already exists)
+        toast.error(error.response.data.message || "User already exists.");
+      } else {
+        toast.error("Signup failed. Please try again.");
+      }
       console.error("signup failed:", error.response?.data || error.message);
-      // Handle signup error
     } finally {
       setIsSubmitting(false);
     }
@@ -56,9 +73,11 @@ function Signup() {
               placeholder="Enter your name"
               value={formData.name}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
-              required
+              className={`mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
           <div>
             <label
@@ -74,28 +93,13 @@ function Signup() {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
-              required
+              className={`mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div>
-            <label
-              htmlFor="profile"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Profile
-            </label>
-            <input
-              type="text"
-              name="profile"
-              id="profile"
-              placeholder="Enter your profile"
-              value={formData.profile}
-              onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
-              required
-            />
-          </div>
+
           <div>
             <label
               htmlFor="password"
@@ -110,9 +114,11 @@ function Signup() {
               placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
-              required
+              className={`mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div>
             <label
@@ -128,9 +134,11 @@ function Signup() {
               placeholder="Enter your phone number"
               value={formData.phoneNumber}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
-              required
+              className={`mt-1 block w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 ${
+                errors.phoneNumber ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
           </div>
           <button
             type="submit"

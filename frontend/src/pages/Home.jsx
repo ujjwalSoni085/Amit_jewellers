@@ -9,12 +9,12 @@ import "../App.css";
 /* ─── Helpers ─────────────────────────────────────── */
 const buildParams = (query, filters, page) => {
   const params = new URLSearchParams();
-  if (query)            params.append("search", query);
+  if (query) params.append("search", query);
   if (filters.category) params.append("category", filters.category);
-  if (filters.purity)   params.append("purity", filters.purity);
+  if (filters.purity) params.append("purity", filters.purity);
   if (filters.minPrice) params.append("minPrice", filters.minPrice);
   if (filters.maxPrice) params.append("maxPrice", filters.maxPrice);
-  if (filters.inStock)  params.append("inStock", "true");
+  if (filters.inStock) params.append("inStock", "true");
   params.append("page", page);
   params.append("limit", 12);
   return params.toString();
@@ -45,15 +45,15 @@ const buildPageRange = (current, total) => {
 /* ─── Active Filter Chips ─────────────────────────── */
 const FilterChips = ({ filters, query, setFilters }) => {
   const chips = [];
-  if (query)            chips.push({ label: `"${query}"`, type: "query" });
+  if (query) chips.push({ label: `"${query}"`, type: "query" });
   if (filters.category) chips.push({ label: filters.category, type: "category" });
-  if (filters.purity)   chips.push({ label: filters.purity, type: "purity" });
+  if (filters.purity) chips.push({ label: filters.purity, type: "purity" });
   if (filters.minPrice || filters.maxPrice) {
     const from = filters.minPrice ? `₹${filters.minPrice}` : "any";
-    const to   = filters.maxPrice ? `₹${filters.maxPrice}` : "any";
+    const to = filters.maxPrice ? `₹${filters.maxPrice}` : "any";
     chips.push({ label: `${from} – ${to}`, type: "price" });
   }
-  if (filters.inStock)  chips.push({ label: "In Stock", type: "inStock" });
+  if (filters.inStock) chips.push({ label: "In Stock", type: "inStock" });
 
   if (chips.length === 0) return null;
 
@@ -125,11 +125,10 @@ const Pagination = ({ currentPage, totalPages, onChange }) => {
             id={`pagination-page-${item}`}
             onClick={() => onChange(item)}
             aria-current={item === currentPage ? "page" : undefined}
-            className={`min-w-[2.25rem] h-9 rounded-lg text-sm font-semibold border transition ${
-              item === currentPage
+            className={`min-w-[2.25rem] h-9 rounded-lg text-sm font-semibold border transition ${item === currentPage
                 ? "bg-yellow-500 border-yellow-500 text-white shadow-sm"
                 : "bg-white border-gray-200 text-gray-600 hover:bg-yellow-50 hover:border-yellow-300"
-            }`}
+              }`}
           >
             {item}
           </button>
@@ -160,11 +159,11 @@ const Pagination = ({ currentPage, totalPages, onChange }) => {
 
 /* ─── Main Page ───────────────────────────────────── */
 const Home = () => {
-  const [products, setProducts]             = useState([]);
-  const [carousel, setCarousel]             = useState([]);
+  const [products, setProducts] = useState([]);
+  const [carousel, setCarousel] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
-  const [currentIndex, setCurrentIndex]     = useState(0);
-  const [totalProducts, setTotalProducts]   = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -172,7 +171,7 @@ const Home = () => {
 
   // Pagination & Filtering state
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages]   = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({
     category: "",
     purity: "",
@@ -240,42 +239,85 @@ const Home = () => {
     <div>
       <main className="p-4 md:p-6 text-center">
 
-        {/* ── Carousel Banner ── */}
-        <p className="text-2xl text-gray-800 font-bold font-serif mb-6">Latest Designs</p>
-        <div className="relative w-full h-[60vh] md:h-[90vh] overflow-hidden rounded-xl shadow-lg">
+        {/* ── Premium Carousel Banner ── */}
+        <div className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden rounded-2xl shadow-2xl group mt-2">
           <div
-            className="flex transition-transform duration-700 ease-in-out h-full"
-            style={{
-              transform: `translateX(-${currentIndex * 100}%)`,
-              width: `${carousel.slice(0, 10).length * 100}%`,
-            }}
+            className="flex transition-transform duration-1000 ease-out h-full"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
-            {carousel.slice(0, 10).map((slide) => (
+            {carousel.slice(0, 10).map((slide, index) => (
               <div
                 key={slide._id}
-                className="flex-shrink-0 flex justify-center items-center h-full"
-                style={{ width: `${100 / carousel.slice(0, 10).length}%` }}
+                className="w-full flex-shrink-0 relative h-full bg-gray-900 overflow-hidden"
               >
+                {/* Image with slight zoom effect when active */}
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className="h-full w-full object-cover rounded-xl"
+                  className={`h-full w-full object-contain md:object-cover transition-transform duration-[3000ms] ease-in-out ${
+                    index === currentIndex ? "scale-105" : "scale-100"
+                  }`}
                 />
+                
+                {/* Gradient Overlay for better text visibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
+
+                {/* Text Content Overlay */}
+                <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-16 text-left">
+                  <div className="max-w-3xl transform transition-all duration-700 translate-y-0 opacity-100">
+                    <span className="inline-block text-yellow-400 font-bold uppercase tracking-[0.2em] text-xs md:text-sm mb-3 drop-shadow-md">
+                      Exclusive Collection
+                    </span>
+                    <h2 className="text-3xl md:text-6xl font-serif font-bold text-white mb-4 leading-tight drop-shadow-lg">
+                      {slide.title || "Elegant Jewellery Collection"}
+                    </h2>
+                    <p className="text-gray-200 text-sm md:text-lg mb-8 max-w-xl drop-shadow-md hidden md:block leading-relaxed">
+                      Discover our latest premium designs crafted with precision and passion. Shine brighter with every beautifully crafted piece.
+                    </p>
+                    <button 
+                      onClick={() => document.getElementById('product-grid-top')?.scrollIntoView({ behavior: "smooth" })} 
+                      className="px-8 py-3.5 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white font-semibold rounded-full shadow-[0_0_20px_rgba(202,138,4,0.4)] hover:shadow-[0_0_25px_rgba(202,138,4,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-2"
+                    >
+                      Shop Collection
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Carousel dots */}
+          {/* Navigation Arrows */}
           {carousel.length > 1 && (
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+            <>
+              <button
+                onClick={() => setCurrentIndex((prev) => (prev === 0 ? carousel.length - 1 : prev - 1))}
+                className="absolute top-1/2 left-4 md:left-8 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-black/20 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg"
+                aria-label="Previous Slide"
+              >
+                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+              </button>
+              <button
+                onClick={() => setCurrentIndex((prev) => (prev === carousel.length - 1 ? 0 : prev + 1))}
+                className="absolute top-1/2 right-4 md:right-8 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-black/20 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg"
+                aria-label="Next Slide"
+              >
+                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+              </button>
+            </>
+          )}
+
+          {/* Modern Progress Dash Indicators */}
+          {carousel.length > 1 && (
+            <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
               {carousel.slice(0, 10).map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentIndex(i)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    i === currentIndex ? "bg-white w-5" : "bg-white/50"
+                  className={`h-1.5 rounded-full transition-all duration-500 ease-in-out ${
+                    i === currentIndex ? "w-10 bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)]" : "w-3 bg-white/40 hover:bg-white/70"
                   }`}
-                  aria-label={`Slide ${i + 1}`}
+                  aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
             </div>
@@ -307,7 +349,7 @@ const Home = () => {
             <FilterChips filters={filters} query={query} setFilters={setFilters} />
 
             {/* Grid */}
-            <div className="flex flex-wrap justify-center md:justify-start gap-5">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-5 w-full">
               {productsLoading ? (
                 Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
               ) : products.length > 0 ? (
@@ -350,7 +392,7 @@ const Home = () => {
             muted
             loop
           >
-            <source src="/video/Luxury_Jewellery_Advertisement_Generation.mp4" type="video/mp4" />
+            <source src="/video/amit-jewellers.mp4?v=5" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>

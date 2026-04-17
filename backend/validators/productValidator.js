@@ -23,16 +23,16 @@ exports.createProductRules = [
   body("image")
     .trim()
     .notEmpty()
-    .withMessage("Product image URL is required")
+    .withMessage("Product image is required")
     .isURL()
-    .withMessage("Please provide a valid image URL"),
+    .withMessage("Please upload a valid image file"),
 
   body("description")
     .trim()
     .notEmpty()
     .withMessage("Description is required")
-    .isLength({ min: 10, max: 1000 })
-    .withMessage("Description must be between 10 and 1000 characters"),
+    .isLength({ min: 3, max: 1000 })
+    .withMessage("Description must be between 3 and 1000 characters"),
 ];
 
 exports.updateProductRules = [

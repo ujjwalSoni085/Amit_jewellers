@@ -16,4 +16,8 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes for faster querying
+productSchema.index({ category: 1 });
+productSchema.index({ metalType: 1 });
+
 module.exports = mongoose.model("Product", productSchema);

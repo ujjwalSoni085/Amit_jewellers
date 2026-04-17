@@ -939,6 +939,7 @@ VITE_WHATSAPP_NUMBER=919685845532
 - [ ] Build `ReviewSection.jsx` + `StarRating.jsx` components
 - [ ] Add review section to Product detail page
 
+
 ### Day 5: Image Upload & Product Enhancement
 - [ ] Set up Cloudinary account (free)
 - [ ] Create `cloudinary.js` upload utility

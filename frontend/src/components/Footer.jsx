@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -28,8 +29,19 @@ const Footer = () => {
             <li>
               📧 <a href="mailto:ujjwalsoni085@gmail.com" className="hover:text-yellow-400">ujjwalsoni085@gmail.com</a>
             </li>
+
+          </ul>
+        </div>
+
+        {/* Quick Links */}
+        <div>
+          <h3 className="text-lg font-semibold text-yellow-400 mb-3">Quick Links</h3>
+          <ul className="text-sm text-gray-300 space-y-2">
             <li>
-              📍 Katra Bazar, Magroni , MP
+              <Link to="/about" className="hover:text-yellow-400">About Us</Link>
+            </li>
+            <li>
+              <Link to="/contact" className="hover:text-yellow-400">Contact Us</Link>
             </li>
           </ul>
         </div>

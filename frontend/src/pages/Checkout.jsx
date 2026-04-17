@@ -66,6 +66,78 @@ const Checkout = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayment = async (orderId, amount) => {
+    const res = await loadRazorpayScript();
+    if (!res) {
+      toast.error("Razorpay SDK failed to load. Check your connection!");
+      return;
+    }
+
+    try {
+      const { data: { key } } = await axiosInstance.get("/payment/get-key");
+
+      const rpRes = await axiosInstance.post("/payment/create-order", {
+        amount: amount,
+        currency: "INR",
+        initialOrderId: orderId
+      });
+
+      const { id: razorpay_order_id, amount: rpAmount, currency } = rpRes.data;
+
+      const options = {
+        key: key,
+        amount: rpAmount,
+        currency: currency,
+        name: "Amit Jewellers",
+        description: "Secure Checkout",
+        order_id: razorpay_order_id,
+        handler: async function (response) {
+          try {
+            const verifyRes = await axiosInstance.post("/payment/verify", {
+               razorpay_order_id: response.razorpay_order_id,
+               razorpay_payment_id: response.razorpay_payment_id,
+               razorpay_signature: response.razorpay_signature,
+               local_order_id: orderId
+            });
+
+            if (verifyRes.data.success) {
+               toast.success("Payment Received!");
+               window.dispatchEvent(new Event("cart-updated")); // Safe to clear cart/badges
+               navigate(`/order-success/${orderId}`);
+            }
+          } catch(err) {
+             toast.error("Verification failed. Contact support.");
+          }
+        },
+        prefill: {
+          name: "Customer",
+          contact: formData.phoneNumber
+        },
+        theme: {
+          color: "#EAB308"
+        }
+      };
+
+      const razor = new window.Razorpay(options);
+      razor.on("payment.failed", function (response) {
+         toast.error("Payment failed: " + response.error.description);
+      });
+      razor.open();
+    } catch (err) {
+       toast.error("Could not initiate payment.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -82,12 +154,15 @@ const Checkout = () => {
         phoneNumber: formData.phoneNumber,
       };
 
+      // 1. Create native Order via normal Crud (Status = pending)
       const res = await axiosInstance.post("/orders/create", orderData);
-      window.dispatchEvent(new Event("cart-updated"));
-      navigate(`/order-success/${res.data.order._id}`);
+      
+      // 2. Trigger Razorpay
+      await handlePayment(res.data.order._id, res.data.order.totalAmount);
+      
     } catch (error) {
-      console.error("Error placing order:", error);
-      toast.error("Failed to place order. Please try again.");
+      console.error("Error processing checkout:", error);
+      toast.error("Failed to checkout. Please try again.");
     } finally {
       setSubmitting(false);
     }

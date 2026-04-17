@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../helper/axiosInstance";
 import { getRole } from "../helper/auth";
 import { formatPrice } from "../utils/formatPrice";
+import OrderTimeline from "../components/OrderTimeline";
 
 const OrderSuccess = () => {
   const { id } = useParams();
@@ -90,6 +91,10 @@ const OrderSuccess = () => {
                   {new Date(order.createdAt).toLocaleDateString()}
                 </p>
               </div>
+            </div>
+
+            <div className="mb-6 overflow-x-auto pb-2">
+               <OrderTimeline status={order.status} />
             </div>
 
             <div className="border-t pt-4">

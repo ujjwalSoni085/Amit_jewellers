@@ -20,12 +20,21 @@ const orderSchema = new mongoose.Schema({
     country: { type: String, default: "India" },
   },
   phoneNumber: { type: String, required: true },
+  razorpayOrderId: { type: String },
+  razorpayPaymentId: { type: String },
+  paymentStatus: { 
+    type: String, 
+    enum: ["pending", "completed", "failed"], 
+    default: "pending" 
+  },
   status: { 
     type: String, 
     enum: ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"],
     default: "pending"
   },
 }, { timestamps: true });
+
+orderSchema.index({ user: 1 });
 
 module.exports = mongoose.model("Order", orderSchema);
 

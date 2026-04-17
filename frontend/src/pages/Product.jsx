@@ -10,6 +10,7 @@ function Product() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
   const [cartMessage, setCartMessage] = useState('');
   const [inWishlist, setInWishlist] = useState(false);
@@ -19,6 +20,7 @@ function Product() {
     axiosInstance.get(`/products/${id}`)
       .then((response) => {
         setProduct(response.data);
+        setSelectedImage(response.data.image);
       })
       .catch((error) => {
         console.error("Error fetching product:", error);
@@ -102,12 +104,39 @@ function Product() {
         <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8">
           {product ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="flex items-center justify-center">
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="w-full max-w-sm aspect-square object-cover rounded-xl ring-1 ring-gray-100"
-                />
+              {/* Product Image Section */}
+              <div className="flex flex-col items-center justify-start gap-6 bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
+                <div className="w-full max-w-[320px] aspect-square bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-4 overflow-hidden">
+                  <img
+                    src={selectedImage || product.image}
+                    alt={product.title}
+                    loading="lazy"
+                    className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+                
+                {product.images?.length > 1 && (
+                  <div className="flex gap-3 flex-wrap justify-center w-full">
+                    {product.images.map((img, i) => (
+                      <div 
+                        key={i}
+                        onClick={() => setSelectedImage(img)}
+                        className={`w-16 h-16 rounded-xl bg-white flex items-center justify-center p-1.5 cursor-pointer transition-all duration-200 ${
+                          selectedImage === img
+                            ? "border-2 border-yellow-500 shadow-md ring-2 ring-yellow-500/20 scale-105"
+                            : "border border-gray-200 hover:border-yellow-400 shadow-sm"
+                        }`}
+                      >
+                        <img
+                          src={img}
+                          alt={`${product.title} view ${i + 1}`}
+                          loading="lazy"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col">
@@ -168,7 +197,7 @@ function Product() {
                       </span>
                     </button>
 
-                    {(() => {
+                    {getRole() !== 'admin' && (() => {
                       const phone = import.meta.env.VITE_WHATSAPP_NUMBER || "919999999999";
                       const msg = `Hello! I'm interested in ${product.title} (${product._id}). Weight: ${product.weight}g, metal: ${product.metalType}.`;
                       const href = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;

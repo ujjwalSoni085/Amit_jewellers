@@ -2,8 +2,7 @@ import React, { use, useState } from "react";
 import axiosInstance from "../helper/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../utils/formatPrice";
-
-
+import { toast } from "react-hot-toast";
 
 const CreateProduct = () => {
   const navigate = useNavigate();
@@ -14,22 +13,51 @@ const CreateProduct = () => {
     description: "",
     category: "Rings",
     purity: "22K",
-    image1: "",
-    image2: "",
-    image3: "",
     tags: "",
     inStock: true,
   });
 
   const [message, setMessage] = useState("");
-  const [preview, setPreview] = useState("");
+  const [errors, setErrors] = useState({});
+  const [imageUrls, setImageUrls] = useState(["", "", ""]);
+  const [uploading, setUploading] = useState([false, false, false]);
   const [prices, setPrices] = useState([]);
 
   // Handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setProduct({ ...product, [name]: type === 'checkbox' ? checked : value });
-    if (name === 'image1') setPreview(value);
+  };
+
+  const handleImageUpload = async (e, index) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const newUploading = [...uploading];
+    newUploading[index] = true;
+    setUploading(newUploading);
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await axiosInstance.post("/products/upload-image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const newUrls = [...imageUrls];
+      newUrls[index] = res.data.url;
+      setImageUrls(newUrls);
+      toast.success(`Image ${index + 1} uploaded!`);
+    } catch (error) {
+      toast.error(error.response?.data?.error || `Failed to upload image ${index + 1}`);
+    } finally {
+      const newUploadingDone = [...uploading];
+      newUploadingDone[index] = false;
+      setUploading(newUploadingDone);
+    }
   };
 
   // Handle form submission
@@ -43,8 +71,8 @@ const CreateProduct = () => {
         description: product.description,
         category: product.category,
         purity: product.purity,
-        image: product.image1,
-        images: [product.image1, product.image2, product.image3].filter(Boolean),
+        image: imageUrls[0],
+        images: imageUrls.filter(Boolean),
         tags: product.tags ? product.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
         inStock: product.inStock
       };
@@ -53,19 +81,29 @@ const CreateProduct = () => {
       const response = await axiosInstance.post("/products/add", payload);
       if (response.status === 201) {
         setMessage("Product added successfully!");
+        setErrors({});
         setProduct({ 
           title: "", weight: "", metalType: "gold", description: "", 
-          category: "Rings", purity: "22K", image1: "", image2: "", image3: "", 
+          category: "Rings", purity: "22K", 
           tags: "", inStock: true 
         });
-        setPreview("");
+        setImageUrls(["", "", ""]);
         navigate("/");
       } else {
         setMessage("Failed to add product. Try again.");
       }
     } catch (error) {
       console.error("Error adding product:", error);
-      setMessage("Something went wrong. Please try again.");
+      if (error.response?.status === 422 && error.response?.data?.errors) {
+        const backendErrors = {};
+        error.response.data.errors.forEach(err => {
+          backendErrors[err.path] = err.msg;
+        });
+        setErrors(backendErrors);
+        setMessage("Please fix the highlighted errors.");
+      } else {
+        setMessage(error.response?.data?.error || "Something went wrong. Please try again.");
+      }
     }
   }
 
@@ -97,6 +135,7 @@ const CreateProduct = () => {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
                 required
               />
+              {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
             </div>
 
             <div className="mb-4">
@@ -109,6 +148,7 @@ const CreateProduct = () => {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
                 required
               />
+              {errors.weight && <p className="text-red-500 text-xs mt-1">{errors.weight}</p>}
             </div>
 
             <div className="mb-4">
@@ -122,6 +162,7 @@ const CreateProduct = () => {
                 <option value="gold">Gold</option>
                 <option value="silver">Silver</option>
               </select>
+              {errors.metalType && <p className="text-red-500 text-xs mt-1">{errors.metalType}</p>}
             </div>
 
             <div className="mb-4">
@@ -162,40 +203,25 @@ const CreateProduct = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium">Image 1 URL (Primary)</label>
-              <input
-                type="text"
-                name="image1"
-                value={product.image1}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
-                required
-              />
-              {preview ? (
-                <img src={preview} alt="Preview" className="mt-2 w-full h-40 object-cover rounded" />
-              ) : null}
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium">Image 2 URL (Optional)</label>
-              <input
-                type="text"
-                name="image2"
-                value={product.image2}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium">Image 3 URL (Optional)</label>
-              <input
-                type="text"
-                name="image3"
-                value={product.image3}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
-              />
+            {[0, 1, 2].map((index) => (
+              <div key={index} className="mb-4">
+                <label className="block text-gray-700 font-medium">
+                  Image {index + 1} {index === 0 ? "(Primary)" : "(Optional)"}
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, index)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                  required={index === 0 && !imageUrls[index]}
+                />
+                {uploading[index] && <p className="text-yellow-600 text-sm mt-1">Uploading...</p>}
+                {imageUrls[index] && (
+                  <img src={imageUrls[index]} alt={`Preview ${index + 1}`} className="mt-2 w-full h-40 object-cover rounded" />
+                )}
+                {index === 0 && errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
+              </div>
+            ))}
             </div>
 
             <div className="mb-4">
@@ -208,6 +234,7 @@ const CreateProduct = () => {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
                 required
               />
+              {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
             </div>
 
             <div className="mb-4">

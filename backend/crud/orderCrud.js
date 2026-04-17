@@ -52,10 +52,7 @@ const createOrder = async (req, res) => {
     await order.save();
     await order.populate("items.product");
 
-    // Clear cart after order
-    cart.items = [];
-    await cart.save();
-
+    // Do NOT clear cart yet. We will clear it in payment/verify upon successful transaction.
     res.status(201).json({ order, message: "Order placed successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });

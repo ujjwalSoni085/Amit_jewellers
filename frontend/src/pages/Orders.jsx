@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../helper/axiosInstance";
 import { getRole } from "../helper/auth";
 import { formatPrice } from "../utils/formatPrice";
+import OrderTimeline from "../components/OrderTimeline";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -82,72 +83,91 @@ const Orders = () => {
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-8">
             {orders.map((order) => (
               <div
                 key={order._id}
-                className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition"
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 hover:shadow-xl transition-all duration-300"
               >
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Order ID</p>
-                    <p className="font-semibold text-gray-900">{order._id}</p>
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-gray-100">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Order ID</span>
+                    <span className="font-mono font-medium text-gray-900 bg-gray-50 px-2 py-1 rounded text-sm">{order._id}</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">Status</p>
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-sm font-medium capitalize ${getStatusColor(
-                        order.status
-                      )}`}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">Total</p>
-                    <p className="font-bold text-xl text-gray-900">
-                      {formatPrice(order.totalAmount)}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">Date</p>
-                    <p className="font-semibold text-gray-900">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </p>
+                  
+                  <div className="flex flex-wrap md:flex-nowrap gap-6 md:gap-10 w-full md:w-auto">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Date Placed</span>
+                      <span className="font-semibold text-gray-900">{new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Amount</span>
+                      <span className="font-bold text-lg text-yellow-700">{formatPrice(order.totalAmount)}</span>
+                    </div>
+                    <div className="flex flex-col gap-1 ml-auto md:ml-0 items-end md:items-start">
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Status</span>
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${getStatusColor(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="border-t pt-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
-                    Items ({order.items.length}):
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {order.items.map((item, idx) => (
-                      <div key={idx} className="flex gap-3">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-16 h-16 object-cover rounded-lg"
-                        />
-                        <div className="flex-1">
-                          <p className="font-medium text-sm text-gray-900">
-                            {item.title}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            Qty: {item.quantity} × {formatPrice(item.price)}
-                          </p>
+                {/* Timeline Section */}
+                <div className="py-8 border-b border-gray-100">
+                  <OrderTimeline status={order.status} />
+                </div>
+
+                {/* Content Section: Products & Shipping */}
+                <div className="flex flex-col lg:flex-row gap-8 pt-8">
+                  {/* Products */}
+                  <div className="flex-1">
+                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                      Order Items ({order.items.length})
+                    </h3>
+                    <div className="flex flex-col gap-4">
+                      {order.items.map((item, idx) => (
+                        <div key={idx} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                          <div className="w-20 h-20 bg-white border border-gray-100 rounded-xl p-1 shrink-0 overflow-hidden shadow-sm">
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              loading="lazy"
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <div className="flex flex-col justify-center flex-1">
+                            <Link to={`/product/${item.product}`} className="font-serif font-bold text-gray-900 text-lg hover:text-yellow-600 transition-colors line-clamp-1">
+                              {item.title}
+                            </Link>
+                            <div className="flex items-center gap-3 mt-1">
+                              <span className="text-sm text-gray-500 font-medium">Qty: <span className="text-gray-900">{item.quantity}</span></span>
+                              <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                              <span className="text-sm font-bold text-gray-900">{formatPrice(item.price)}</span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="border-t pt-4 mt-4">
-                  <p className="text-sm text-gray-600 mb-1">Shipping to:</p>
-                  <p className="text-gray-900">
-                    {order.shippingAddress.street}, {order.shippingAddress.city},{" "}
-                    {order.shippingAddress.state} {order.shippingAddress.pincode}
-                  </p>
+                  {/* Shipping Address */}
+                  <div className="lg:w-1/3 shrink-0">
+                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                      Shipping Details
+                    </h3>
+                    <div className="bg-yellow-50/50 border border-yellow-100 rounded-xl p-5 shadow-sm">
+                      <p className="font-bold text-gray-900 mb-1">{order.user?.name || "Customer"}</p>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        {order.shippingAddress.street}<br/>
+                        {order.shippingAddress.city}, {order.shippingAddress.state} <br/>
+                        <span className="font-medium text-gray-900 mt-1 inline-block">PIN: {order.shippingAddress.pincode}</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
