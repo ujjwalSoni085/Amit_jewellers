@@ -4,7 +4,7 @@ const {
   addToWishlist,
   removeFromWishlist,
   clearWishlist,
-} = require("../crud/wishlistCrud");
+} = require("../controllers/wishlistController");
 const verifyUser = require("../middlewares/verifyUser");
 
 const router = express.Router();

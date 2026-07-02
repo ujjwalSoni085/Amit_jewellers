@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axiosInstance from "../helper/axiosInstance"; // Adjust the path as needed
+import axiosInstance from "../helpers/axiosInstance"; // Adjust the path as needed
 import { useNavigate } from "react-router-dom";
 
 function AdminLogin() {
@@ -44,7 +44,7 @@ function AdminLogin() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+      <div className="bg-white shadow-md rounded-sm p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Admin Login
         </h1>
@@ -63,7 +63,7 @@ function AdminLogin() {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-sm shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
               required
             />
           </div>
@@ -81,14 +81,14 @@ function AdminLogin() {
               placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-sm shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
               required
             />
           </div>
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full bg-yellow-500 text-white py-2 px-4 rounded-lg transition duration-300 ${
+            className={`w-full bg-yellow-500 text-white py-2 px-4 rounded-sm transition duration-300 ${
               isSubmitting
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-yellow-600"

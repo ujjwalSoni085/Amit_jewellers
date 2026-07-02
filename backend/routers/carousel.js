@@ -1,5 +1,5 @@
 const express = require("express");
-const { addCarousel, getAllCarousel, deleteCarousel } = require("../crud/productcarousel");
+const { addCarousel, getAllCarousel, deleteCarousel } = require("../controllers/productCarouselController");
 const verifyAdmin = require("../middlewares/verifyAdmin");//varify the admin
 
 //connect the router

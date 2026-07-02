@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axiosInstance from "../helper/axiosInstance";
-import { getRole } from "../helper/auth";
+import axiosInstance from "../helpers/axiosInstance";
+import { getRole } from "../helpers/auth";
 import { formatPrice } from "../utils/formatPrice";
 import { toast } from "react-hot-toast";
 
@@ -87,8 +87,10 @@ const Cart = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Shopping Cart</h1>
 
         {!cart || !cart.items || cart.items.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-            <div className="text-6xl mb-4">🛒</div>
+          <div className="bg-white rounded-sm shadow-md p-8 text-center">
+            <div className="flex justify-center mb-4">
+              <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
             <h2 className="text-2xl font-semibold text-gray-800 mb-2">
               Your cart is empty
             </h2>
@@ -97,7 +99,7 @@ const Cart = () => {
             </p>
             <Link
               to="/"
-              className="inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition font-medium"
+              className="inline-block bg-yellow-500 text-white px-6 py-3 rounded-sm hover:bg-yellow-600 transition font-medium"
             >
               Continue Shopping
             </Link>
@@ -109,14 +111,14 @@ const Cart = () => {
               {cart.items.map((item) => (
                 <div
                   key={item._id}
-                  className="bg-white rounded-xl shadow-md p-4 flex flex-col md:flex-row gap-4"
+                  className="bg-white rounded-sm shadow-md p-4 flex flex-col md:flex-row gap-4"
                 >
                   <Link to={`/product/${item.product._id}`}>
                     <img
                       src={item.product.image}
                       alt={item.product.title}
                       loading="lazy"
-                      className="w-full md:w-32 h-32 object-cover rounded-lg"
+                      className="w-full md:w-32 h-32 object-cover rounded-sm"
                     />
                   </Link>
                   <div className="flex-1 flex flex-col justify-between">
@@ -135,13 +137,13 @@ const Cart = () => {
                       </p>
                     </div>
                     <div className="flex items-center gap-4 mt-4">
-                      <div className="flex items-center gap-2 border rounded-lg">
+                      <div className="flex items-center gap-2 border rounded-sm">
                         <button
                           onClick={() => updateQuantity(item._id, item.quantity - 1)}
                           className="px-3 py-1 hover:bg-gray-100 rounded-l-lg"
                           disabled={item.quantity <= 1}
                         >
-                          −
+                          -
                         </button>
                         <span className="px-4 py-1 min-w-[3rem] text-center">
                           {item.quantity}
@@ -172,7 +174,7 @@ const Cart = () => {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
+              <div className="bg-white rounded-sm shadow-md p-6 sticky top-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
                   Order Summary
                 </h2>
@@ -192,7 +194,7 @@ const Cart = () => {
                 </div>
                 <button
                   onClick={() => navigate("/checkout")}
-                  className="w-full bg-yellow-500 text-white py-3 rounded-lg hover:bg-yellow-600 transition font-medium text-lg"
+                  className="w-full bg-yellow-500 text-white py-3 rounded-sm hover:bg-yellow-600 transition font-medium text-lg"
                 >
                   Proceed to Checkout
                 </button>

@@ -5,7 +5,7 @@ const {
   getOrderById,
   getAllOrders,
   updateOrderStatus,
-} = require("../crud/orderCrud");
+} = require("../controllers/orderController");
 const verifyUser = require("../middlewares/verifyUser");
 const verifyAdmin = require("../middlewares/verifyAdmin");
 

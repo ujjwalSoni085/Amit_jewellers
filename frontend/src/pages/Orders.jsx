@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../helper/axiosInstance";
-import { getRole } from "../helper/auth";
+import axiosInstance from "../helpers/axiosInstance";
+import { getRole } from "../helpers/auth";
 import { formatPrice } from "../utils/formatPrice";
 import OrderTimeline from "../components/OrderTimeline";
 
@@ -67,8 +67,10 @@ const Orders = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-6">My Orders</h1>
 
         {orders.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-            <div className="text-6xl mb-4">📦</div>
+          <div className="bg-white rounded-sm shadow-md p-8 text-center">
+            <div className="flex justify-center mb-4">
+              <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            </div>
             <h2 className="text-2xl font-semibold text-gray-800 mb-2">
               No orders yet
             </h2>
@@ -77,7 +79,7 @@ const Orders = () => {
             </p>
             <Link
               to="/"
-              className="inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition font-medium"
+              className="inline-block bg-yellow-500 text-white px-6 py-3 rounded-sm hover:bg-yellow-600 transition font-medium"
             >
               Start Shopping
             </Link>
@@ -87,7 +89,7 @@ const Orders = () => {
             {orders.map((order) => (
               <div
                 key={order._id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 hover:shadow-xl transition-all duration-300"
+                className="bg-white rounded-sm shadow-sm border border-gray-100 p-6 sm:p-8 hover:shadow-md transition-all duration-300"
               >
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-gray-100">
@@ -107,7 +109,7 @@ const Orders = () => {
                     </div>
                     <div className="flex flex-col gap-1 ml-auto md:ml-0 items-end md:items-start">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Status</span>
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${getStatusColor(order.status)}`}>
+                      <span className={`inline-flex items-center px-3 py-1 rounded-sm text-xs font-bold uppercase tracking-wider ${getStatusColor(order.status)}`}>
                         {order.status}
                       </span>
                     </div>
@@ -129,8 +131,8 @@ const Orders = () => {
                     </h3>
                     <div className="flex flex-col gap-4">
                       {order.items.map((item, idx) => (
-                        <div key={idx} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
-                          <div className="w-20 h-20 bg-white border border-gray-100 rounded-xl p-1 shrink-0 overflow-hidden shadow-sm">
+                        <div key={idx} className="flex gap-4 p-3 rounded-sm hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                          <div className="w-20 h-20 bg-white border border-gray-100 rounded-sm p-1 shrink-0 overflow-hidden shadow-sm">
                             <img
                               src={item.image}
                               alt={item.title}
@@ -144,7 +146,7 @@ const Orders = () => {
                             </Link>
                             <div className="flex items-center gap-3 mt-1">
                               <span className="text-sm text-gray-500 font-medium">Qty: <span className="text-gray-900">{item.quantity}</span></span>
-                              <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                              <span className="w-1 h-1 bg-gray-300 rounded-sm"></span>
                               <span className="text-sm font-bold text-gray-900">{formatPrice(item.price)}</span>
                             </div>
                           </div>
@@ -159,7 +161,7 @@ const Orders = () => {
                       <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                       Shipping Details
                     </h3>
-                    <div className="bg-yellow-50/50 border border-yellow-100 rounded-xl p-5 shadow-sm">
+                    <div className="bg-yellow-50/50 border border-yellow-100 rounded-sm p-5 shadow-sm">
                       <p className="font-bold text-gray-900 mb-1">{order.user?.name || "Customer"}</p>
                       <p className="text-sm text-gray-600 leading-relaxed">
                         {order.shippingAddress.street}<br/>

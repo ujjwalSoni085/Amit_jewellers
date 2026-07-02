@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../helper/axiosInstance";
+import axiosInstance from "../helpers/axiosInstance";
 import { formatPrice } from "../utils/formatPrice";
 import { toast } from "react-hot-toast";
-import { getRole } from "../helper/auth";
+import { getRole } from "../helpers/auth";
 
-/* ─────────────────────────────────────────────
-   Wishlist-specific card (has the Remove button)
-   ───────────────────────────────────────────── */
+// Wishlist-specific card (has the Remove button)
 const WishlistCard = ({ product, onRemove, onView }) => (
   <div className="wishlist-card">
     <button
@@ -16,7 +14,7 @@ const WishlistCard = ({ product, onRemove, onView }) => (
       aria-label="Remove from wishlist"
       title="Remove from wishlist"
     >
-      ✕
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
     </button>
 
     <div className="wishlist-card__img-wrap" onClick={() => onView(product._id)}>
@@ -35,48 +33,49 @@ const WishlistCard = ({ product, onRemove, onView }) => (
       <h3 className="wishlist-card__title">{product.title}</h3>
       <div className="wishlist-card__meta">
         <span className="wishlist-card__badge">
-          {product.weight}g · {product.metalType}
+          {product.weight}g Â· {product.metalType}
         </span>
         <span className="wishlist-card__price">{formatPrice(product.price)}</span>
       </div>
 
       <div className="wishlist-card__actions">
         <button
-          className="wishlist-card__btn wishlist-card__btn--primary"
+          className="wishlist-card__btn wishlist-card__btn--primary flex items-center justify-center"
           onClick={() => onView(product._id)}
         >
-          🔍 View
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+          View
         </button>
         <button
-          className="wishlist-card__btn wishlist-card__btn--danger"
+          className="wishlist-card__btn wishlist-card__btn--danger flex items-center justify-center"
           onClick={() => onRemove(product._id)}
         >
-          🗑️ Remove
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          Remove
         </button>
       </div>
     </div>
   </div>
 );
 
-/* ─────────────────────────────────────────────
-   Empty-state illustration
-   ───────────────────────────────────────────── */
+// Empty-state illustration
 const EmptyWishlist = ({ onBrowse }) => (
   <div className="wishlist-empty">
-    <div className="wishlist-empty__icon">💔</div>
+    <div className="wishlist-empty__icon flex justify-center">
+      <svg className="w-16 h-16 text-yellow-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+    </div>
     <h2 className="wishlist-empty__heading">Your wishlist is empty</h2>
     <p className="wishlist-empty__sub">
-      Save your favourite jewellery pieces here — heart any product to get started.
+      Save your favourite jewellery pieces here - heart any product to get started.
     </p>
-    <button className="wishlist-empty__btn" onClick={onBrowse}>
-      ✨ Browse Collections
+    <button className="wishlist-empty__btn flex items-center justify-center" onClick={onBrowse}>
+      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+      Browse Collections
     </button>
   </div>
 );
 
-/* ─────────────────────────────────────────────
-   Main page
-   ───────────────────────────────────────────── */
+// Main page
 export default function Wishlist() {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
@@ -124,12 +123,14 @@ export default function Wishlist() {
   /* Navigate to product */
   const handleView = (productId) => navigate(`/product/${productId}`);
 
-  /* ── Skeleton loader ── */
   if (loading) {
     return (
       <div className="wishlist-page">
         <div className="wishlist-header">
-          <h1 className="wishlist-header__title">❤️ My Wishlist</h1>
+          <h1 className="wishlist-header__title flex items-center gap-2">
+            <svg className="w-8 h-8 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            My Wishlist
+          </h1>
         </div>
         <div className="wishlist-grid">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -144,10 +145,12 @@ export default function Wishlist() {
     <>
       <style>{styles}</style>
       <div className="wishlist-page">
-        {/* ── Page Header ── */}
         <div className="wishlist-header">
           <div>
-            <h1 className="wishlist-header__title">❤️ My Wishlist</h1>
+            <h1 className="wishlist-header__title flex items-center gap-2">
+              <svg className="w-8 h-8 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              My Wishlist
+            </h1>
             <p className="wishlist-header__sub">
               {items.length} {items.length === 1 ? "item" : "items"} saved
             </p>
@@ -162,7 +165,6 @@ export default function Wishlist() {
           )}
         </div>
 
-        {/* ── Content ── */}
         {items.length === 0 ? (
           <EmptyWishlist onBrowse={() => navigate("/")} />
         ) : (
@@ -182,9 +184,7 @@ export default function Wishlist() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Scoped styles (no external CSS file needed)
-   ───────────────────────────────────────────── */
+// Scoped styles (no external CSS file needed)
 const styles = `
   .wishlist-page {
     min-height: 100vh;
@@ -192,7 +192,6 @@ const styles = `
     padding: 2rem 1rem 4rem;
   }
 
-  /* ── Header ── */
   .wishlist-header {
     max-width: 1200px;
     margin: 0 auto 2rem;
@@ -234,7 +233,6 @@ const styles = `
     transform: translateY(-1px);
   }
 
-  /* ── Grid ── */
   .wishlist-grid {
     max-width: 1200px;
     margin: 0 auto;
@@ -243,7 +241,6 @@ const styles = `
     gap: 1.5rem;
   }
 
-  /* ── Card ── */
   .wishlist-card {
     position: relative;
     background: #fff;
@@ -388,7 +385,6 @@ const styles = `
     border: 1px solid #fecaca;
   }
 
-  /* ── Skeleton ── */
   .wishlist-skeleton {
     border-radius: 1.25rem;
     background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
@@ -401,7 +397,6 @@ const styles = `
     100% { background-position: -200% 0; }
   }
 
-  /* ── Empty state ── */
   .wishlist-empty {
     max-width: 460px;
     margin: 5rem auto;
@@ -450,7 +445,6 @@ const styles = `
     box-shadow: 0 8px 28px rgba(217,119,6,0.4);
   }
 
-  /* ── Responsive ── */
   @media (max-width: 600px) {
     .wishlist-header__title { font-size: 1.5rem; }
     .wishlist-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }

@@ -11,7 +11,7 @@ const Footer = () => {
           <img 
             src="/papa.jpg" 
             alt="Papa" 
-            className=" w-40 h-40 rounded-lg border-2 border-yellow-400 mr-4 object-cover"
+            className=" w-40 h-40 rounded-sm border-2 border-yellow-400 mr-4 object-cover"
           />
           <div className="hidden md:block mt-2">
             <span className="text-base text-gray-300 font-semibold">Pro Nirmal Soni</span>
@@ -57,7 +57,7 @@ const Footer = () => {
           </p>
 
           <div className="mt-6 flex justify-center md:justify-end">
-            <div className="px-5 py-3 rounded-xl">
+            <div className="px-5 py-3 rounded-sm">
               <p className="text-2xl md:text-3xl font-bold text-white text-center">
                 70 Years of Trust <span className="text-lg font-medium italic text-gray-300">(Since 1955)</span>
               </p>

@@ -1,5 +1,5 @@
 import React, { use, useState } from "react";
-import axiosInstance from "../helper/axiosInstance";
+import axiosInstance from "../helpers/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../utils/formatPrice";
 import { toast } from "react-hot-toast";
@@ -117,7 +117,7 @@ const CreateProduct = () => {
   return (
     <div>
       <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-        <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 space-y-4">
+        <div className="w-full max-w-md bg-white shadow-md rounded-sm p-6 space-y-4">
           <h2 className="text-2xl font-bold text-gray-800 text-center">
             Add a New Product
           </h2>
@@ -132,7 +132,7 @@ const CreateProduct = () => {
                 name="title"
                 value={product.title}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring focus:ring-yellow-300"
                 required
               />
               {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
@@ -145,7 +145,7 @@ const CreateProduct = () => {
                 name="weight"
                 value={product.weight}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring focus:ring-yellow-300"
                 required
               />
               {errors.weight && <p className="text-red-500 text-xs mt-1">{errors.weight}</p>}
@@ -157,7 +157,7 @@ const CreateProduct = () => {
                 name="metalType"
                 value={product.metalType}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring focus:ring-yellow-300"
               >
                 <option value="gold">Gold</option>
                 <option value="silver">Silver</option>
@@ -171,7 +171,7 @@ const CreateProduct = () => {
                 name="category"
                 value={product.category}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring focus:ring-yellow-300"
               >
                 <option value="Rings">Rings</option>
                 <option value="Necklaces">Necklaces</option>
@@ -192,7 +192,7 @@ const CreateProduct = () => {
                 name="purity"
                 value={product.purity}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring focus:ring-yellow-300"
               >
                 <option value="24K">24K</option>
                 <option value="22K">22K</option>
@@ -212,7 +212,7 @@ const CreateProduct = () => {
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleImageUpload(e, index)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                  className="w-full p-3 border border-gray-300 rounded-sm focus:ring focus:ring-yellow-300"
                   required={index === 0 && !imageUrls[index]}
                 />
                 {uploading[index] && <p className="text-yellow-600 text-sm mt-1">Uploading...</p>}
@@ -231,7 +231,7 @@ const CreateProduct = () => {
                 name="description"
                 value={product.description}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring focus:ring-yellow-300"
                 required
               />
               {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
@@ -245,7 +245,7 @@ const CreateProduct = () => {
                 value={product.tags}
                 onChange={handleChange}
                 placeholder="e.g. bestseller, wedding, new arrival"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-yellow-300"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring focus:ring-yellow-300"
               />
             </div>
 
@@ -262,12 +262,12 @@ const CreateProduct = () => {
 
             <button
               type="submit"
-              className="w-full bg-yellow-500 text-white font-bold py-3 rounded-lg hover:bg-yellow-600 transition"
+              className="w-full bg-yellow-500 text-white font-bold py-3 rounded-sm hover:bg-yellow-600 transition"
             >
               Add Product
             </button>
             <div className="text-sm text-gray-600 mt-2">
-              Estimated price: {computed ? formatPrice(computed) : '—'}
+              Estimated price: {computed ? formatPrice(computed) : 'â€”'}
             </div>
           </form>
         </div>

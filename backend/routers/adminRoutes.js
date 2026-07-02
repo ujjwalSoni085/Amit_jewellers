@@ -3,7 +3,7 @@ const {
   createAdmin,
   loginAdmin,
   getAdmin,
-} = require("../crud/adminCrud");
+} = require("../controllers/adminController");
 const allowFirstAdminOrRequireAdmin = require("../middlewares/allowFirstAdminOrRequireAdmin");
 const verifyAdmin = require("../middlewares/verifyAdmin");
 const { authLimiter } = require("../middlewares/rateLimiter");

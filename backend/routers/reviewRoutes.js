@@ -3,7 +3,7 @@ const {
   getReviewsForProduct,
   addReview,
   deleteReview,
-} = require("../crud/reviewCrud");
+} = require("../controllers/reviewController");
 const verifyUser = require("../middlewares/verifyUser");
 
 const router = express.Router();

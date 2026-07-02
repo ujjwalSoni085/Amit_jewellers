@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../helper/axiosInstance";
+import axiosInstance from "../helpers/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import AdminCustomerList from "../components/AdminCustomerList";
@@ -191,25 +191,26 @@ const Admin = () => {
 
       {/* Top KPI bar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="rounded-2xl border border-yellow-200 bg-white p-6 shadow-sm flex flex-col justify-center">
+        <div className="rounded-sm border border-yellow-200 bg-white p-6 shadow-sm flex flex-col justify-center">
           <div className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">Gold Price (24K)</div>
-          <div className="text-3xl font-bold text-yellow-600">{gold ? formatPrice(gold.pricePerGram) : '—'}</div>
-          <button onClick={refreshPrices} className="mt-4 text-sm px-4 py-2 rounded-lg border border-yellow-300 text-yellow-700 hover:bg-yellow-50 font-medium self-start transition-colors">
-            🔄 Refresh API
+          <div className="text-3xl font-bold text-yellow-600">{gold ? formatPrice(gold.pricePerGram) : '-'}</div>
+          <button onClick={refreshPrices} className="mt-4 flex items-center justify-center text-sm px-4 py-2 rounded-sm border border-yellow-300 text-yellow-700 hover:bg-yellow-50 font-medium self-start transition-colors">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            Refresh API
           </button>
         </div>
         
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col justify-center">
+        <div className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm flex flex-col justify-center">
           <div className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">Total Revenue</div>
           <div className="text-3xl font-bold text-green-600">{formatPrice(totalRevenue)}</div>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col justify-center">
+        <div className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm flex flex-col justify-center">
           <div className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">Total Orders</div>
           <div className="text-3xl font-bold text-gray-900">{orders.length}</div>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col justify-center">
+        <div className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm flex flex-col justify-center">
           <div className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wider">Total Products</div>
           <div className="text-3xl font-bold text-gray-900">{products.length}</div>
         </div>
@@ -217,7 +218,7 @@ const Admin = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Revenue Chart */}
-        <section className="lg:col-span-2 rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm p-6">
+        <section className="lg:col-span-2 rounded-sm border border-gray-200 bg-white overflow-hidden shadow-sm p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-6">Revenue Over Time (Last 7 Days)</h2>
           <div className="h-72 w-full">
             {revenueData.length > 0 ? (
@@ -237,14 +238,14 @@ const Admin = () => {
         </section>
 
         {/* Carousel Manager */}
-        <section className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm flex flex-col">
+        <section className="rounded-sm border border-gray-200 bg-white overflow-hidden shadow-sm flex flex-col">
           <div className="px-6 py-4 bg-gray-50 border-b">
             <h2 className="text-lg font-bold text-gray-900">Carousel Manager</h2>
           </div>
           <div className="p-6 flex-1 flex flex-col overflow-y-auto max-h-96">
             <form onSubmit={handleSubmit} className="space-y-3 mb-6 shrink-0">
               <input
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 outline-none text-sm"
                 type="text"
                 placeholder="Title"
                 value={formData.title}
@@ -256,15 +257,15 @@ const Admin = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleCarouselUpload}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm"
+                  className="w-full p-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 outline-none text-sm"
                 />
                 {uploadingCarousel && <p className="text-yellow-600 text-xs">Uploading...</p>}
                 {formData.image && (
-                  <img src={formData.image} alt="Preview" className="w-full h-32 object-cover rounded-lg mt-2" />
+                  <img src={formData.image} alt="Preview" className="w-full h-32 object-cover rounded-sm mt-2" />
                 )}
               </div>
               <textarea
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none text-sm resize-none"
+                className="w-full p-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 outline-none text-sm resize-none"
                 placeholder="Description"
                 rows="2"
                 value={formData.description}
@@ -273,7 +274,7 @@ const Admin = () => {
                 }
               />
               <button
-                className="w-full bg-yellow-500 text-white font-bold px-4 py-3 rounded-lg hover:bg-yellow-600 transition"
+                className="w-full bg-yellow-500 text-white font-bold px-4 py-3 rounded-sm hover:bg-yellow-600 transition"
                 type="submit"
               >
                 Add Slide
@@ -282,22 +283,22 @@ const Admin = () => {
 
             <div className="space-y-4">
               {items.map((item) => (
-                <div key={item._id} className="border border-gray-100 p-3 rounded-xl bg-gray-50 flex gap-3 items-center">
+                <div key={item._id} className="border border-gray-100 p-3 rounded-sm bg-gray-50 flex gap-3 items-center">
                   <img
                     src={item.image}
                     alt={item.title}
                     loading="lazy"
-                    className="w-20 h-16 object-cover rounded-lg"
+                    className="w-20 h-16 object-cover rounded-sm"
                   />
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-semibold truncate">{item.title}</h3>
                   </div>
                   <button
                     onClick={() => handleDelete(item._id)}
-                    className="text-red-500 hover:bg-red-50 p-2 rounded-lg transition"
+                    className="text-red-500 hover:bg-red-50 p-2 rounded-sm transition"
                     title="Delete"
                   >
-                    🗑️
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                   </button>
                 </div>
               ))}
@@ -309,7 +310,7 @@ const Admin = () => {
       {/* Customer & Order Management Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Order Management */}
-        <section className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm flex flex-col">
+        <section className="rounded-sm border border-gray-200 bg-white overflow-hidden shadow-sm flex flex-col">
           <div className="px-6 py-4 bg-gray-50 border-b flex justify-between items-center shrink-0">
             <h2 className="text-lg font-bold text-gray-900">Order Management</h2>
           </div>
@@ -337,14 +338,14 @@ const Admin = () => {
                     <td className="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 font-semibold text-gray-900">{formatPrice(order.totalAmount)}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 rounded-md text-xs font-semibold ${
+                      <span className={`inline-flex px-2 py-1 rounded-sm text-xs font-semibold ${
                         order.paymentStatus === 'completed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                       }`}>
                         {order.paymentStatus || "pending"}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(order.status)}`}>
+                      <span className={`inline-block px-3 py-1 rounded-sm text-xs font-semibold capitalize ${getStatusColor(order.status)}`}>
                         {order.status}
                       </span>
                     </td>
@@ -352,7 +353,7 @@ const Admin = () => {
                       <select
                         value={order.status}
                         onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                        className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 p-2 outline-none"
+                        className="bg-white border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-yellow-500 focus:border-yellow-500 p-2 outline-none"
                       >
                         <option value="pending">Pending</option>
                         <option value="confirmed">Confirmed</option>
@@ -378,7 +379,7 @@ const Admin = () => {
       </div>
 
       {/* Product Manager */}
-      <section className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+      <section className="rounded-sm border border-gray-200 bg-white overflow-hidden shadow-sm">
         <div className="flex items-center justify-between px-6 py-4 bg-gray-50 border-b">
           <h2 className="text-lg font-bold text-gray-900">Product Manager ({products.length})</h2>
         </div>

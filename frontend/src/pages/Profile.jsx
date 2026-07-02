@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../helper/axiosInstance";
-import { getRole } from "../helper/auth";
+import axiosInstance from "../helpers/axiosInstance";
+import { getRole } from "../helpers/auth";
 import toast from "react-hot-toast";
 
 const Profile = () => {
@@ -102,9 +102,9 @@ const Profile = () => {
           My Profile
         </h1>
 
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white rounded-sm shadow-md overflow-hidden">
           <div className="bg-yellow-500 p-6 sm:p-10 flex flex-col items-center text-white">
-            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-4xl font-bold text-yellow-600 mb-4 shadow-inner">
+            <div className="w-24 h-24 bg-white rounded-sm flex items-center justify-center text-4xl font-bold text-yellow-600 mb-4 shadow-inner">
               {user?.name?.charAt(0).toUpperCase()}
             </div>
             <h2 className="text-2xl font-bold">{user?.email}</h2>
@@ -126,7 +126,7 @@ const Profile = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     required
                   />
                 </div>
@@ -139,7 +139,7 @@ const Profile = () => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     required
                   />
                 </div>
@@ -160,7 +160,7 @@ const Profile = () => {
                     name="street"
                     value={formData.savedAddress.street}
                     onChange={handleAddressChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     placeholder="House/Flat No., Street, Area"
                   />
                 </div>
@@ -174,7 +174,7 @@ const Profile = () => {
                       name="city"
                       value={formData.savedAddress.city}
                       onChange={handleAddressChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     />
                   </div>
                   <div>
@@ -186,7 +186,7 @@ const Profile = () => {
                       name="state"
                       value={formData.savedAddress.state}
                       onChange={handleAddressChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     />
                   </div>
                 </div>
@@ -201,7 +201,7 @@ const Profile = () => {
                       value={formData.savedAddress.pincode}
                       onChange={handleAddressChange}
                       maxLength="6"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     />
                   </div>
                   <div>
@@ -213,7 +213,7 @@ const Profile = () => {
                       name="country"
                       value={formData.savedAddress.country}
                       onChange={handleAddressChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     />
                   </div>
                 </div>
@@ -224,10 +224,10 @@ const Profile = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className={`px-8 py-3 rounded-lg font-bold text-white transition shadow-lg ${
+                className={`px-8 py-3 rounded-sm font-bold text-white transition shadow-md ${
                   saving
                     ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-yellow-500 hover:bg-yellow-600 hover:-translate-y-1 hover:shadow-xl"
+                    : "bg-yellow-500 hover:bg-yellow-600 hover:-translate-y-1 hover:shadow-md"
                 }`}
               >
                 {saving ? "Saving Changes..." : "Save Changes"}

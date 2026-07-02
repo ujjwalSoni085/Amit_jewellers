@@ -5,7 +5,7 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
-} = require("../crud/productCrud");
+} = require("../controllers/productController");
 
 const verifyAdmin = require("../middlewares/verifyAdmin");
 const { createProductRules, updateProductRules } = require("../validators/productValidator");

@@ -44,7 +44,7 @@ const FilterSidebar = ({ filters, setFilters }) => {
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold text-gray-800 tracking-tight">Filters</span>
           {activeCount > 0 && (
-            <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-yellow-500 rounded-full">
+            <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-yellow-500 rounded-sm">
               {activeCount}
             </span>
           )}
@@ -62,7 +62,6 @@ const FilterSidebar = ({ filters, setFilters }) => {
       {/* Divider */}
       <hr className="border-gray-100" />
 
-      {/* ── Category ── */}
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Category</p>
         <div className="flex flex-wrap gap-2">
@@ -72,7 +71,7 @@ const FilterSidebar = ({ filters, setFilters }) => {
               <button
                 key={cat}
                 onClick={() => handleCategoryToggle(cat)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
+                className={`px-3 py-1.5 rounded-sm text-sm font-medium border transition-all duration-200 ${
                   active
                     ? "bg-yellow-500 border-yellow-500 text-white shadow-sm"
                     : "bg-white border-gray-200 text-gray-600 hover:border-yellow-400 hover:text-yellow-600"
@@ -88,7 +87,6 @@ const FilterSidebar = ({ filters, setFilters }) => {
       {/* Divider */}
       <hr className="border-gray-100" />
 
-      {/* ── Purity ── */}
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Purity</p>
         <div className="flex flex-wrap gap-2">
@@ -98,7 +96,7 @@ const FilterSidebar = ({ filters, setFilters }) => {
               <button
                 key={pur}
                 onClick={() => handlePurityToggle(pur)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
+                className={`px-3 py-1.5 rounded-sm text-sm font-medium border transition-all duration-200 ${
                   active
                     ? "bg-yellow-500 border-yellow-500 text-white shadow-sm"
                     : "bg-white border-gray-200 text-gray-600 hover:border-yellow-400 hover:text-yellow-600"
@@ -114,7 +112,6 @@ const FilterSidebar = ({ filters, setFilters }) => {
       {/* Divider */}
       <hr className="border-gray-100" />
 
-      {/* ── Price Range ── */}
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Price Range (₹)</p>
         <div className="flex items-center gap-2">
@@ -127,7 +124,7 @@ const FilterSidebar = ({ filters, setFilters }) => {
               value={filters.minPrice}
               onChange={handleChange}
               min="0"
-              className="w-full pl-7 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              className="w-full pl-7 pr-3 py-2 border border-gray-200 rounded-sm text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
             />
           </div>
           <span className="text-gray-300 font-bold">—</span>
@@ -140,7 +137,7 @@ const FilterSidebar = ({ filters, setFilters }) => {
               value={filters.maxPrice}
               onChange={handleChange}
               min="0"
-              className="w-full pl-7 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+              className="w-full pl-7 pr-3 py-2 border border-gray-200 rounded-sm text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
             />
           </div>
         </div>
@@ -149,7 +146,6 @@ const FilterSidebar = ({ filters, setFilters }) => {
       {/* Divider */}
       <hr className="border-gray-100" />
 
-      {/* ── In Stock Toggle ── */}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-semibold text-gray-700">In Stock Only</p>
@@ -163,7 +159,7 @@ const FilterSidebar = ({ filters, setFilters }) => {
             onChange={handleChange}
             className="sr-only peer"
           />
-          <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-yellow-500 transition-colors duration-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all after:duration-300 peer-checked:after:translate-x-5 shadow-inner" />
+          <div className="w-11 h-6 bg-gray-200 rounded-sm peer peer-checked:bg-yellow-500 transition-colors duration-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-sm after:h-5 after:w-5 after:transition-all after:duration-300 peer-checked:after:translate-x-5 shadow-inner" />
         </label>
       </div>
 
@@ -172,11 +168,10 @@ const FilterSidebar = ({ filters, setFilters }) => {
 
   return (
     <>
-      {/* ── Mobile Trigger Bar ── */}
       <div className="md:hidden mb-4">
         <button
           onClick={() => setMobileOpen(prev => !prev)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm text-gray-700 font-semibold"
+          className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-sm shadow-sm text-gray-700 font-semibold"
         >
           <span className="flex items-center gap-2">
             {/* funnel icon */}
@@ -185,7 +180,7 @@ const FilterSidebar = ({ filters, setFilters }) => {
             </svg>
             Filters
             {activeCount > 0 && (
-              <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-yellow-500 rounded-full">
+              <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-yellow-500 rounded-sm">
                 {activeCount}
               </span>
             )}
@@ -200,15 +195,14 @@ const FilterSidebar = ({ filters, setFilters }) => {
 
         {/* Mobile Drawer */}
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${mobileOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="mt-2 bg-white border border-gray-100 rounded-xl shadow-md p-5">
+          <div className="mt-2 bg-white border border-gray-100 rounded-sm shadow-md p-5">
             <SidebarContent />
           </div>
         </div>
       </div>
 
-      {/* ── Desktop Sidebar ── */}
       <aside className="hidden md:block w-64 shrink-0 self-start sticky top-4">
-        <div className="bg-white border border-gray-100 rounded-2xl shadow-md p-5">
+        <div className="bg-white border border-gray-100 rounded-sm shadow-md p-5">
           <SidebarContent />
         </div>
       </aside>

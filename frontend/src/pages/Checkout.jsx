@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axiosInstance from "../helper/axiosInstance";
-import { getRole } from "../helper/auth";
+import axiosInstance from "../helpers/axiosInstance";
+import { getRole } from "../helpers/auth";
 import { formatPrice } from "../utils/formatPrice";
 import { toast } from "react-hot-toast";
 
@@ -205,7 +205,7 @@ const Checkout = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Shipping Address Form */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+            <div className="bg-white rounded-sm shadow-md p-6 mb-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">
                 Shipping Address
               </h2>
@@ -220,7 +220,7 @@ const Checkout = () => {
                     value={formData.street}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     placeholder="House/Flat No., Street, Area"
                   />
                 </div>
@@ -236,7 +236,7 @@ const Checkout = () => {
                       value={formData.city}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     />
                   </div>
 
@@ -250,7 +250,7 @@ const Checkout = () => {
                       value={formData.state}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     />
                   </div>
                 </div>
@@ -268,7 +268,7 @@ const Checkout = () => {
                       required
                       pattern="[0-9]{6}"
                       maxLength="6"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     />
                   </div>
 
@@ -282,7 +282,7 @@ const Checkout = () => {
                       value={formData.country}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     />
                   </div>
                 </div>
@@ -297,7 +297,7 @@ const Checkout = () => {
                     value={formData.phoneNumber}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     placeholder="+91 1234567890"
                   />
                 </div>
@@ -305,14 +305,14 @@ const Checkout = () => {
                 <div className="flex gap-4 pt-4">
                   <Link
                     to="/cart"
-                    className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                    className="px-6 py-2 border border-gray-300 rounded-sm hover:bg-gray-50 transition"
                   >
                     Back to Cart
                   </Link>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className={`flex-1 px-6 py-2 rounded-lg font-medium transition ${
+                    className={`flex-1 px-6 py-2 rounded-sm font-medium transition ${
                       submitting
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-yellow-500 hover:bg-yellow-600 text-white"
@@ -327,7 +327,7 @@ const Checkout = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
+            <div className="bg-white rounded-sm shadow-md p-6 sticky top-24">
               <h2 className="text-xl font-bold text-gray-900 mb-4">
                 Order Summary
               </h2>
@@ -339,7 +339,7 @@ const Checkout = () => {
                         {item.product.title}
                       </p>
                       <p className="text-gray-600">
-                        Qty: {item.quantity} × {formatPrice(item.product.price)}
+                        Qty: {item.quantity} x {formatPrice(item.product.price)}
                       </p>
                     </div>
                     <p className="font-medium text-gray-900">

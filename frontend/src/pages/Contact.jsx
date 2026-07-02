@@ -38,7 +38,7 @@ const Contact = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+        <div className="bg-white rounded-sm shadow-md overflow-hidden flex flex-col md:flex-row">
 
           {/* Contact Information */}
           <div className="bg-yellow-600 text-white p-10 md:w-2/5 flex flex-col justify-between">
@@ -91,7 +91,7 @@ const Contact = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     placeholder="John Doe"
                   />
                 </div>
@@ -104,7 +104,7 @@ const Contact = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -119,7 +119,7 @@ const Contact = () => {
                   required
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition"
                   placeholder="How can we help you?"
                 />
               </div>
@@ -133,7 +133,7 @@ const Contact = () => {
                   required
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition resize-none"
                   placeholder="Write your message here..."
                 ></textarea>
               </div>
@@ -141,9 +141,9 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full py-4 rounded-xl font-bold text-white transition-all shadow-md ${isSubmitting
+                className={`w-full py-4 rounded-sm font-bold text-white transition-all shadow-md ${isSubmitting
                     ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-yellow-600 hover:bg-yellow-700 hover:shadow-lg transform hover:-translate-y-0.5"
+                    : "bg-yellow-600 hover:bg-yellow-700 hover:shadow-md transform hover:-translate-y-0.5"
                   }`}
               >
                 {isSubmitting ? "Sending Message..." : "Send Message"}

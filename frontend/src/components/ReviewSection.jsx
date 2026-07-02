@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axiosInstance from "../helper/axiosInstance";
-import { getRole } from "../helper/auth";
+import axiosInstance from "../helpers/axiosInstance";
+import { getRole } from "../helpers/auth";
 import { toast } from "react-hot-toast";
 import StarRating from "./StarRating";
 
-/* ─────────────────────────────────────────────
-   Decode the JWT payload to read `id` / `_id`
-   without any extra dependency.
-   ───────────────────────────────────────────── */
+// Decode the JWT payload to read `id` / `_id`
+// without any extra dependency.
 function getLoggedInUserId() {
   try {
     const token = localStorage.getItem("authToken");
@@ -19,9 +17,7 @@ function getLoggedInUserId() {
   }
 }
 
-/* ─────────────────────────────────────────────
-   Average rating bar (5 → 1 breakdown)
-   ───────────────────────────────────────────── */
+// Average rating bar (5 â†’ 1 breakdown)
 const RatingBreakdown = ({ reviews }) => {
   const total = reviews.length;
   const avg =
@@ -49,7 +45,7 @@ const RatingBreakdown = ({ reviews }) => {
           const pct = total === 0 ? 0 : Math.round((count / total) * 100);
           return (
             <div key={star} className="rs-bar-row">
-              <span className="rs-bar-row__label">{star}★</span>
+              <span className="rs-bar-row__label">{star} ★</span>
               <div className="rs-bar-row__track">
                 <div
                   className="rs-bar-row__fill"
@@ -65,9 +61,7 @@ const RatingBreakdown = ({ reviews }) => {
   );
 };
 
-/* ─────────────────────────────────────────────
-   Single review card
-   ───────────────────────────────────────────── */
+// Single review card
 const ReviewCard = ({ review, currentUserId, onDelete }) => {
   const isOwn = currentUserId && review.user?._id === currentUserId;
   const date = new Date(review.createdAt).toLocaleDateString("en-IN", {
@@ -101,20 +95,19 @@ const ReviewCard = ({ review, currentUserId, onDelete }) => {
 
       {isOwn && (
         <button
-          className="rs-card__delete"
+          className="rs-card__delete flex items-center justify-center"
           onClick={() => onDelete(review._id)}
           aria-label="Delete your review"
         >
-          🗑️ Delete my review
+          <svg className="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          Delete my review
         </button>
       )}
     </div>
   );
 };
 
-/* ─────────────────────────────────────────────
-   Write-review form
-   ───────────────────────────────────────────── */
+// Write-review form
 const WriteReviewForm = ({ productId, onSuccess }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -137,7 +130,7 @@ const WriteReviewForm = ({ productId, onSuccess }) => {
         rating,
         comment: comment.trim(),
       });
-      toast.success("Review submitted ✨");
+      toast.success("Review submitted!");
       setRating(0);
       setComment("");
       onSuccess();
@@ -185,15 +178,18 @@ const WriteReviewForm = ({ productId, onSuccess }) => {
         disabled={submitting}
         className={`rs-form__submit ${submitting ? "rs-form__submit--loading" : ""}`}
       >
-        {submitting ? "Submitting…" : "⭐ Submit Review"}
+        {submitting ? "Submitting..." : (
+          <span className="flex items-center justify-center">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+            Submit Review
+          </span>
+        )}
       </button>
     </form>
   );
 };
 
-/* ─────────────────────────────────────────────
-   Main exported component
-   ───────────────────────────────────────────── */
+// Main exported component
 const ReviewSection = ({ productId }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -238,12 +234,10 @@ const ReviewSection = ({ productId }) => {
       <section className="rs-section" aria-label="Product reviews">
         <h2 className="rs-section__heading">Customer Reviews</h2>
 
-        {/* ── Summary ── */}
         {!loading && <RatingBreakdown reviews={reviews} />}
 
         <hr className="rs-divider" />
 
-        {/* ── Loading skeleton ── */}
         {loading && (
           <div className="rs-skeleton-list">
             {[1, 2, 3].map((i) => (
@@ -252,10 +246,11 @@ const ReviewSection = ({ productId }) => {
           </div>
         )}
 
-        {/* ── Review list ── */}
         {!loading && reviews.length === 0 && (
           <div className="rs-empty">
-            <span className="rs-empty__icon">💬</span>
+            <span className="rs-empty__icon flex justify-center">
+              <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            </span>
             <p>No reviews yet. Be the first to share your experience!</p>
           </div>
         )}
@@ -273,7 +268,6 @@ const ReviewSection = ({ productId }) => {
           </div>
         )}
 
-        {/* ── Write-review form (auth-gated) ── */}
         {isLoggedInUser && !hasOwnReview && (
           <>
             <hr className="rs-divider" />
@@ -282,8 +276,9 @@ const ReviewSection = ({ productId }) => {
         )}
 
         {isLoggedInUser && hasOwnReview && (
-          <p className="rs-already-reviewed">
-            ✅ You&apos;ve already reviewed this product. Delete your review above to submit a new one.
+          <p className="rs-already-reviewed flex items-center">
+            <svg className="w-5 h-5 mr-1 inline text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+            You&apos;ve already reviewed this product. Delete your review above to submit a new one.
           </p>
         )}
 
@@ -302,11 +297,8 @@ const ReviewSection = ({ productId }) => {
 
 export default ReviewSection;
 
-/* ─────────────────────────────────────────────
-   Scoped styles
-   ───────────────────────────────────────────── */
+// Scoped styles
 const styles = `
-  /* ── Section wrapper ── */
   .rs-section {
     background: #fff;
     border-radius: 1.25rem;
@@ -329,7 +321,6 @@ const styles = `
     margin: 1.5rem 0;
   }
 
-  /* ── Rating summary ── */
   .rs-summary {
     display: flex;
     gap: 2rem;
@@ -394,7 +385,6 @@ const styles = `
     text-align: left;
   }
 
-  /* ── Review card ── */
   .rs-list {
     display: flex;
     flex-direction: column;
@@ -488,7 +478,6 @@ const styles = `
     background: #fef2f2;
   }
 
-  /* ── Empty / loading ── */
   .rs-empty {
     text-align: center;
     color: #9ca3af;
@@ -519,7 +508,6 @@ const styles = `
     100% { background-position: -200% 0; }
   }
 
-  /* ── Write-review form ── */
   .rs-form {
     display: flex;
     flex-direction: column;
@@ -593,7 +581,6 @@ const styles = `
     cursor: not-allowed;
   }
 
-  /* ── Footer prompts ── */
   .rs-already-reviewed {
     font-size: 0.85rem;
     color: #92400e;
@@ -615,7 +602,6 @@ const styles = `
     text-decoration: underline;
   }
 
-  /* ── Responsive ── */
   @media (max-width: 600px) {
     .rs-section { padding: 1.25rem 1rem 1.75rem; }
     .rs-summary { flex-direction: column; gap: 1rem; align-items: flex-start; }

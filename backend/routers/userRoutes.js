@@ -4,7 +4,7 @@ const {
   loginUser,
   getUser,
   updateUser
-} = require("../crud/userCrud");
+} = require("../controllers/userController");
 const verifyUser = require("../middlewares/verifyUser");
 
 const { signupRules, loginRules } = require("../validators/userValidator");

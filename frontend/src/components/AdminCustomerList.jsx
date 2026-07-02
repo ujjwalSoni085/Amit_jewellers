@@ -34,7 +34,7 @@ const AdminCustomerList = ({ orders }) => {
   );
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+    <section className="rounded-sm border border-gray-200 bg-white overflow-hidden shadow-sm">
       <div className="px-6 py-4 bg-gray-50 border-b flex justify-between items-center">
         <h2 className="text-lg font-bold text-gray-900">Top Customers ({customers.length})</h2>
       </div>
@@ -57,7 +57,7 @@ const AdminCustomerList = ({ orders }) => {
                     <div className="text-xs text-gray-500">{customer.phone}</div>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-bold">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-sm bg-blue-100 text-blue-800 font-bold">
                       {customer.orderCount}
                     </span>
                   </td>

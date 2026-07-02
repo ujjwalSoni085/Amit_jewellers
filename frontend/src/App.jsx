@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import Products from "./pages/Products";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Product from "./pages/Product";
@@ -31,11 +32,12 @@ export default function App() {
         <main className="flex-grow overflow-hidden">
           <Suspense fallback={
             <div className="flex items-center justify-center min-h-[50vh]">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-600"></div>
+              <div className="animate-spin rounded-sm h-12 w-12 border-t-2 border-b-2 border-yellow-600"></div>
             </div>
           }>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
               <Route path="/create-product" element={<RequireAdmin><CreateProduct /></RequireAdmin>} />
               <Route path="/product/:id" element={<Product />} />
               <Route path="/signup" element={<Signup />} />

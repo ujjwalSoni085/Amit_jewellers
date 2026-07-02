@@ -1,5 +1,5 @@
 import React from "react";
-import axiosInstance from "../helper/axiosInstance";
+import axiosInstance from "../helpers/axiosInstance";
 
 export default function SignOutButton({ className }) {
   const handleLogout = async () => {
@@ -13,7 +13,7 @@ export default function SignOutButton({ className }) {
   };
 
   return (
-    <button onClick={handleLogout} className={className || "bg-white text-yellow-700 font-medium px-3 py-1 rounded-full hover:bg-yellow-100 transition shadow-sm text-sm"}>
+    <button onClick={handleLogout} className={className || "bg-white text-yellow-700 font-medium px-3 py-1 rounded-sm hover:bg-yellow-100 transition shadow-sm text-sm"}>
       Sign out
     </button>
   );
